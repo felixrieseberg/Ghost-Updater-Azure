@@ -1,4 +1,4 @@
-# Ghost Updater for Microsoft Azure
+# Ghost Updater for Microsoft Azure [WIP]
 This is tiny tool allows the automatic upgrade of Ghost running in Azure Websites. 
 
 ## What's happening inside

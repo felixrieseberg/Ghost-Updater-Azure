@@ -6,6 +6,27 @@ var express         = require('express'),
     fs              = require('fs'),
     filesfolders    = require('./filesfolders');
 
+router.get('/', function (req, res) {
+
+});
+
+router.get('/upload', function (req, res) {
+    res.json('Uploading Ghost to target website');
+    uploadGhost();
+});
+
+router.get('/deploy', function (req, res) {
+    res.json('Deploying updater script to target website');
+    uploadUpdaterScript();
+});
+
+router.get('/trigger', function (req, res) {
+    res.json('Triggering updater script to target website');
+    triggerUpdaterScript();
+});
+
+// Helper functions
+// ------------------------------------------------------------------------------
 function uploadGhost() {
     debug('Uploading Ghost to Azure Website');
 
@@ -34,21 +55,5 @@ function triggerUpdaterScript() {
         return true;
     });
 }
-
-router.get('/upload', function(req, res) {
-    res.json('Uploading Ghost to target website');
-    uploadGhost();
-});
-
-router.get('/deploy', function(req, res) {
-    res.json('Deploying updater script to target website');
-    uploadUpdaterScript();
-});
-
-router.get('/trigger', function(req, res) {
-    res.json('Triggering updater script to target website');
-    triggerUpdaterScript();
-});
-
 
 module.exports = router;
