@@ -31,7 +31,7 @@ Move-Item -Path ./package.json -Destination D:\home\site\wwwroot\
 # Cleanup NPM modules
 "Removing node modules"
 cd "D:\home\site\wwwroot"
-Remove-Item -Path ./node-modules/* -Recurse
+Remove-Item -Path ./node_modules/* -Recurse
 "Running npm install (production)"
 npm install --production
 
@@ -42,3 +42,5 @@ cd "D:\home\site\temp\"
 Remove-Item -Path ./latest -Recurse
 "Removing temp Ghost zip"
 Remove-Item -Path ./ghost.zip
+
+"All done"

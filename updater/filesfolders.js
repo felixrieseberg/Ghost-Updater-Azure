@@ -91,11 +91,11 @@ var filesfolders = {
                     function(error, response, body) {
                         if (error) {
                             debug('Trigger Error: ', error);
-                            reject.call(error);
+                            reject(error);
                         }
                         debug('Response: ', response);
                         debug('Body: ', body);
-                        resolve.call(response);
+                        resolve(response);
                     })
                 );
             })
@@ -112,11 +112,11 @@ var filesfolders = {
                 function(error, response, body) {
                     if (error) {
                         debug('Trigger Error: ', error);
-                        reject.call(error);
+                        reject(error);
                     }
                     debug('Response: ', response);
                     debug('Body: ', body);
-                    resolve.call(response);
+                    resolve(response);
                 }
             )
         });
