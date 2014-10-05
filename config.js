@@ -1,7 +1,7 @@
 var config = {
-    website: process.env.website || 'https://ghostautoupdatetest.scm.azurewebsites.net',
-    user: process.env.user || '$ghostautoupdatetest',
-    password: process.env.password || 'MksdwSjBuG8iTYEYl4hayRP0tSZwf9Zljbt1QGDoPZ3ijvwt7iRXHr2TviHP',
+    website: process.env.website || 'https://ghostupdatetest.scm.azurewebsites.net',
+    user: process.env.user || '$ghostupdatetest',
+    password: process.env.password || 'bHY0wH2NvhQubnuqRhsZwjTd9ixbpeg2e2xDdppWTlMcWrmcu174ot1MTrGp',
     latestGhost: process.env.latestGhost || 'https://ghost.org/zip/ghost-latest.zip',
 }
 

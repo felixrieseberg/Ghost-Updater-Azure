@@ -12,46 +12,44 @@ Promise.promisifyAll(require('request'));
 
 function uploadGhost() {
     debug('Uploading Ghost to Azure Website');
+
     filesfolders.upload('ghost.zip', 'site/temp/ghost.zip')
     .then(function (result) {
-        debug('Upload done, result: ' + res);
-    }).then(function() {
-        //Check result
-        // Unzip
+        debug('Upload done, result: ' + result);
     });
 }
 
-function postCommand(body) {
-    body = JSON.stringify(body);
+function uploadUpdaterScript() {
+    debug('Deploying Updater Webjob');
 
-    return request.postAsync({
-        'auth': config.auth,
-        'url': config.website + '/api/command',
-        'body': body,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Content-Length': body.length
-        }
-    }).then(function(response, body) {
-        debug('Response received', response);
-        return response;
-    }).catch(console.log);
+    filesfolders.uploadWebjob('./bin/updater.ps1', 'updater.ps1')
+    .then(function (result) {
+        debug('Upload done, result: ' + result);
+    });
 }
 
-function unzipGhost() {
-
+function triggerUpdaterScript() {
+    debug('Triggering Updater Webjob');
+    filesfolders.triggerWebjob('updater.ps1')
+    .then(function (result) {
+        debug('Trigger successful, result: ' + result);
+    });
 }
 
-
-// Upload ZIP with CMD file?
-// And then execute that?
-
-router.get('/', function(req, res) {
-    postCommand({
-        "cmd": 'unzip ghost',
-        "dir": 'site\\temp'
-    })
-    res.json('done');
+router.get('/upload', function(req, res) {
+    res.json('Uploading Ghost to target website');
+    uploadGhost();
 });
+
+router.get('/deploy', function(req, res) {
+    res.json('Deploying updater script to target website');
+    uploadUpdaterScript();
+});
+
+router.get('/trigger', function(req, res) {
+    res.json('Triggering updater script to target website');
+    triggerUpdaterScript();
+});
+
 
 module.exports = router;

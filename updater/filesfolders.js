@@ -64,11 +64,61 @@ var filesfolders = {
             sourceStream.pipe(request.put(targetUrl, {'auth': config.auth}, 
                 function(error, result) {
                     if (error) {
+                        debug('Upload Error: ', error);
                         reject.call(error);
                     }
                     resolve.call(result);
                 })
             );
+        });
+    },
+
+    uploadWebjob: function (source, name) {
+        return new Promise(function (resolve, reject) {
+            var targetUrl = config.website + '/api/triggeredwebjobs/' + name,
+                sourceStream = fs.createReadStream(source);
+
+            debug('Uploading Webjob ' + source + ' as ' + name);
+
+            request.delAsync(targetUrl, {'auth': config.auth})
+            .then(function () {
+                sourceStream.pipe(request.put(targetUrl, {
+                    'auth': config.auth,
+                    'headers': {
+                        'Content-Disposition': 'attachement; filename=' + name
+                    }
+                }, 
+                    function(error, response, body) {
+                        if (error) {
+                            debug('Trigger Error: ', error);
+                            reject.call(error);
+                        }
+                        debug('Response: ', response);
+                        debug('Body: ', body);
+                        resolve.call(response);
+                    })
+                );
+            })
+        });
+    },
+
+    triggerWebjob: function (name) {
+        return new Promise(function (resolve, reject) {
+            var targetUrl = config.website + '/api/triggeredwebjobs/' + name + '/run';
+
+            debug('Triggering Webjob ' + name);
+
+            request.post(targetUrl, {'auth': config.auth}, 
+                function(error, response, body) {
+                    if (error) {
+                        debug('Trigger Error: ', error);
+                        reject.call(error);
+                    }
+                    debug('Response: ', response);
+                    debug('Body: ', body);
+                    resolve.call(response);
+                }
+            )
         });
     },
     
