@@ -1,22 +1,8 @@
 # Ghost Updater for Microsoft Azure
+This is tiny tool allows the automatic upgrade of Ghost running in Azure Websites. 
 
-Required steps
-- Backup data (manual step)
-- Stop website
-- Download new ghost
-- Replace index.js, package.js
-- Replace ./core
-- Replace ./content/themes/casper
-- Run website
-- Run npm install --production
-
-# Using REST API cmd interface
-- cd /home
-- mkdir temp
-- cd ./temp
-- download Ghost zip
-- stream PUT Ghost zip
-- unzip ghost zip
-- move files
-- npm install --production
-- restart website
+## What's happening inside
+I boiled the update of Ghost down to a simple three-step-program.
+- Upload the latest release to your website
+- Deploying an upgrade script, which will do all the critical hard work right on the machine running your website
+- Triggering said script, which will unzip the package, update Ghost files and update the Node modules.
