@@ -1,0 +1,60 @@
+<div class="wrapper" id="step1">
+    <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
+    <p>This tool automatically updates Ghost on a Microsoft Azure Website. It's especially useful if you installed Ghost using the Gallery and just selected 'Ghost' in the Azure Management Portal while creating the website.</p>
+    <div id="websiteDetails">
+        <div class="row">
+            <label for="blog-url">Blog URL</label>
+            <input id="blog-url" type="text" placeholder="yoursite.azurewebsites.net" required> 
+            <p>Please enter your azurewebsites.net address, which has the format <em>yoursite.azurewebsites.net</em>.</p>
+        </div>
+        <div class="row">
+            <label for="blog-username">Deployment Username</label>
+            <input id="blog-username" type="text" placeholder="$yoursite" required>
+        </div>
+        <div class="row">
+            <label for="blog-password">Deployment Password</label>
+            <input id="blog-password" type="password" required>
+            <p><strong>Do not</strong> use the username/password you use to log into Azure. <a data-target="#help" class="js-panelswitch" href="#">Where do I find my deployment credentials?</a></p>
+        </div>
+        <div class="row" id="ghost-zip-container">
+            <label for="ghost-zip">Ghost Package</label>
+            <input id="ghost-zip" accept=".zip" type="file" required>
+        </div>
+    </div>
+    <div id="confirmArea">
+        <button data-target="#step2" id="btn-next-s1">Continue</button>
+    </div>
+</div>
+<div class="wrapper" id="step2">
+    <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
+    <p>Please make a backup of your data. It's unlikely that this tool will break things, but please do use Ghost's backup function anyway.</p>
+    <p>In your web browser, go to <a id="backuplink">your site's debug page</a> and press the export button to download a file containing all of your data. Done!</p>
+    <img src="/images/backup-screen.png" />
+    <div id="confirmArea">
+        <button class="js-panelswitch" data-target="#step1" id="btn-back-s2">Back</button>
+        <button id="btn-start-s3">I Saved My Data, Start Update</button>
+    </div>
+</div>
+<div class="wrapper" id="step3">
+    <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
+    <div id="outputArea"></div>
+    <div id="scriptLogArea">
+        <p id="scriptLog"></p>
+    </div>
+</div>
+
+<!-- Help -->
+<div class="wrapper" id="help">
+    <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
+    <p>The username and password required for this tool are the so called deployment credentials - the same you use to upload files via FTP or Git. <strong>They are not the credentials you use to log into the Azure Management Portal!</strong></p>
+    <p>In your web browser, visit the Azure Management Portal and open up your website's dashboard. There, click on 'Reset Your Deployment Credentials' to enter a username and password.</p>
+    <img src="/images/password-screen.png" />
+    <div id="confirmArea">
+        <button class="js-panelswitch" data-target="#step1" id="helpback">Go Back</button>
+    </div>
+</div>
+
+<script src="/scripts/built.js" type="text/javascript"></script>
+<script type="text/javascript">
+    UpdaterClient.init();
+</script>

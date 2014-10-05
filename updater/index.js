@@ -1,59 +1,100 @@
 var express         = require('express'),
-    config          = require('../config'),
     debug           = require('debug')('Updater'),
-    Promise         = require('bluebird'),
     router          = express.Router(),
-    fs              = require('fs'),
+
+    config          = require('../config'),
     filesfolders    = require('./filesfolders');
 
-router.get('/', function (req, res) {
+var updaterScriptRunning, updaterScriptLog;
 
+router.get('/config', function (req, res) {
+    var website, scmPosition;
+
+    debug('Config variables received', req.query);
+
+    // Clean URL
+    website = 'https://' + req.query.url;
+    scmPosition = website.indexOf('.azurewebsites.net');
+    website = website.substr(0, scmPosition) + '.scm' + website.substr(scmPosition);
+
+    config.website = website;
+    config.username = req.query.username;
+    config.password = req.query.password;
+    if (config.standalone && req.query.zippath) {
+        config.zippath = req.query.zippath;
+    }
+
+    debug('Config is now:', config.website, config.username, config.password, config.zippath);
+
+    res.json({ website: config.website, username: config.username, password: config.password, zippath: config.zippath });
 });
 
 router.get('/upload', function (req, res) {
-    res.json('Uploading Ghost to target website');
-    uploadGhost();
+    debug('Uploading Ghost to Azure Website');
+    simpleUID = filesfolders.simpleUID();
+
+    filesfolders.upload(config.zippath, 'site/temp/ghost.zip')
+    .then(function (result) {
+        debug('Upload done, result: ' + result);
+        res.json(result);
+    }).catch(function(error) {
+        res.json({ err: error });
+    });
 });
 
 router.get('/deploy', function (req, res) {
-    res.json('Deploying updater script to target website');
-    uploadUpdaterScript();
-});
-
-router.get('/trigger', function (req, res) {
-    res.json('Triggering updater script to target website');
-    triggerUpdaterScript();
-});
-
-// Helper functions
-// ------------------------------------------------------------------------------
-function uploadGhost() {
-    debug('Uploading Ghost to Azure Website');
-
-    return filesfolders.upload('ghost.zip', 'site/temp/ghost.zip')
-    .then(function (result) {
-        debug('Upload done, result: ' + result);
-        return true;
-    });
-}
-
-function uploadUpdaterScript() {
     debug('Deploying Updater Webjob');
 
     return filesfolders.uploadWebjob('./bin/updater.ps1', 'updater.ps1')
     .then(function (result) {
         debug('Upload done, result: ' + result);
-        return true;
+        res.json(result);
     });
-}
+});
 
-function triggerUpdaterScript() {
+router.get('/trigger', function (req, res) {
     debug('Triggering Updater Webjob');
+
     return filesfolders.triggerWebjob('updater.ps1')
     .then(function (result) {
         debug('Trigger successful, result: ' + result);
-        return true;
+        return res.json(result);
     });
-}
+});
+
+router.get('/info', function (req, res) {
+    debug('Getting log info');
+
+    var responseBody;
+
+    if (!updaterScriptRunning && !updaterScriptLog) {
+        return filesfolders.getWebjobInfo('updater.ps1')
+        .then(function (result) {
+            debug(result);
+            
+            if (result && result.statusCode === 200) {
+                responseBody = JSON.parse(result.body);
+                updaterScriptLog = (responseBody.latest_run && responseBody.latest_run.output_url) ? responseBody.latest_run.output_url : '';
+                updaterScriptRunning = (updaterScriptLog) ? true : false;
+            }
+
+            debug(updaterScriptLog);
+            return updaterScriptLog;
+        }).then(function () {
+            return filesfolders.getWebjobLog(updaterScriptLog)
+            .then(function (logcontent) {
+                debug('We have content! Size: ' + logcontent.length);
+                res.set('Content-Type', 'text/plain');
+                return res.send(logcontent);
+            });
+        });
+    } else {
+        return filesfolders.getWebjobLog(updaterScriptLog)
+        .then(function (logcontent) {
+            res.set('Content-Type', 'text/plain');
+            return res.send(logcontent);
+        });
+    }    
+});
 
 module.exports = router;

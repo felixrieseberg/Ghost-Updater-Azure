@@ -29,9 +29,7 @@ Move-Item -Path ./index.js -Destination D:\home\site\wwwroot\
 Move-Item -Path ./package.json -Destination D:\home\site\wwwroot\
 
 # Cleanup NPM modules
-"Removing node modules"
 cd "D:\home\site\wwwroot"
-Remove-Item -Path ./node_modules/* -Recurse
 "Running npm install (production)"
 npm install --production
 
