@@ -35,7 +35,7 @@
   },
   "window": {
     "title": "Ghost Updater for Azure Websites",
-    "icon": "link.png",
+    "icon": "/public/images/icon.png",
     "toolbar": false,
     "frame": true,
     "width": 880,
