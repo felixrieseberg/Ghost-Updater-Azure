@@ -1,4 +1,4 @@
-/*! Ghost-Updater-Azure - v0.1.0 - 2014-10-09 */var UpdaterClient = UpdaterClient || {};
+/*! Ghost-Updater-Azure - v0.5.0 - 2014-10-09 */var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.init = function () {
     $('input').bind('input', UpdaterClient.validation.validateConfig);
