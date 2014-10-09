@@ -1,9 +1,14 @@
 {
   "name": "Ghost-Updater-Azure",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "private": false,
   "main": "index.html",
-  "author": "Felix Rieseberg",
+  "maintainers": [{
+     "name": "Felix Rieseberg",
+     "email": "felix.rieseberg@mirosoft.com",
+     "web": "http://www.felixrieseberg.com"
+  }],
+  "bugs": "https://github.com/felixrieseberg/Ghost-Updater-Azure/issues",
   "scripts": {
     "start": "node ./app.js"
   },
@@ -20,12 +25,13 @@
     "express-handlebars": "^1.1.0"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "^0.10.0",
     "grunt": "^0.4.5",
+    "grunt-concurrent": "^1.0.0",
     "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-nodemon": "^0.3.0",
-    "grunt-concurrent": "^1.0.0"
+    "grunt-node-webkit-builder": "^0.2.3",
+    "grunt-nodemon": "^0.3.0"
   },
   "window": {
     "title": "Ghost Updater for Azure Websites",
@@ -36,5 +42,9 @@
     "height": 680,
     "resizable": false,
     "position": "center"
-  }
+  },
+  "repositories": [{
+        "type": "git", 
+        "url": "https://github.com/felixrieseberg/Ghost-Updater-Azure.git"
+     }]
 }

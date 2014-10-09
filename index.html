@@ -2,6 +2,13 @@
 <head>
     <script>
         function bodyOnLoad(){
+            var nw = require('nw.gui'),
+                win = nw.Window.get(),
+                nativeMenuBar = new nw.Menu({ type: "menubar" });
+                
+            nativeMenuBar.createMacBuiltin("Ghost Updater for Azure");
+            win.menu = nativeMenuBar;
+
             require('./app.js');
             window.location.assign('http://localhost:3000/');
         }
