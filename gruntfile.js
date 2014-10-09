@@ -54,7 +54,7 @@ module.exports = function(grunt) {
                     name: 'Ghost Updater for Azure',
                     winIco: './public/images/icon.ico'
                 },
-                src: ['./public/**/*', './updater/**/*', './updater_client/**/*', './views/**/*', './*.js', './*.html', './*.json'] // Your node-webkit app
+                src: ['public/**/*', 'node_modules/**/*', '!node_modules/grunt**/**', 'updater/**/*', 'updater_client/**/*', 'views/**/*', '*.js', '*.html', '*.json'] // Your node-webkit app
             },
             unix: {
                 options: {
@@ -65,7 +65,7 @@ module.exports = function(grunt) {
                     macIcns: './public/images/icon.icns',
                     winIco: './public/images/icon.ico'
                 },
-                src: ['./public/**/*', './updater/**/*', './updater_client/**/*', './views/**/*', './*.js', './*.html', './*.json'] // Your node-webkit app
+                src: ['public/**/*', 'node_modules/**/*', '!node_modules/grunt**/**', 'updater/**/*', 'updater_client/**/*', 'views/**/*', '*.js', '*.html', '*.json'] // Your node-webkit app
             }
         },
 
