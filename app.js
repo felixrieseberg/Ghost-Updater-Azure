@@ -28,6 +28,7 @@ app.get('/nw', function (req, res) {
     res.json({ isNodeWebkit: config.standalone });
 });
 app.use('/updater', updater);
+app.use('/backup', backup);
 
 app.get('/', function (req, res) {
     res.render('index');
