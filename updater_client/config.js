@@ -5,5 +5,6 @@ UpdaterClient.config = {
     username: '',
     password: '',
     zippath: '',
-    standalone: undefined
+    standalone: undefined,
+    backup: false
 };

@@ -8,7 +8,8 @@ var express         = require('express'),
     debug           = require('debug')('Ghost-Updater-Azure'),
     
     config          = require('./config'),
-    updater         = require('./updater');
+    updater         = require('./updater'),
+    backup          = require('./updater/backup');
 
 var app = express(), errorHandlers;
 

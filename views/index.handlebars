@@ -1,4 +1,5 @@
-<div class="wrapper" id="step1">
+<!-- Config -->
+<div class="wrapper" id="config">
     <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
     <p>This tool automatically updates Ghost on a Microsoft Azure Website. It's especially useful if you installed Ghost using the Gallery and just selected 'Ghost' in the Azure Management Portal while creating the website.</p>
     <div id="websiteDetails">
@@ -22,35 +23,59 @@
         </div>
     </div>
     <div id="confirmArea">
-        <button data-target="#step2" id="btn-next-s1">Continue</button>
+        <button data-target="#step2" id="btn-setconfig">Continue</button>
     </div>
 </div>
-<div class="wrapper" id="step2">
-    <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
-    <p>Please make a backup of your data. It's unlikely that this tool will break things, but please do use Ghost's backup function anyway.</p>
-    <p>In your web browser, go to <a id="backuplink">your site's debug page</a> and press the export button to download a file containing all of your data. Done!</p>
-    <img src="/images/backup-screen.png" />
+
+<!-- Backup Disclaimer -->
+<div class="wrapper" id="backupdisclaimer">
+    <h1 class="title">Save your stuff</h1>
+    <p>It's unlikely that things go wrong, but it's better to be safe than sorry. We can create a full backup (including all files). Once the update is done, you can either restore or delete it.</p>
+    <p>Alternatively, go to <a id="backuplink">your site's debug page</a> and press the export button to download a file containing your blog's settings and posts. This tool can't restore from this file.</p>
     <div id="confirmArea">
         <button class="js-panelswitch" data-target="#step1" id="btn-back-s2">Back</button>
-        <button id="btn-start-s3">I Saved My Data, Start Update</button>
+        <button id="btn-backup-create">Create Backup</button>
+        <button id="btn-update">Skip Backup, Start Update</button>
     </div>
 </div>
-<div class="wrapper" id="step3">
-    <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
+
+
+<!-- Help -->
+<div class="wrapper" id="help">
+    <h1 class="title">Finding your deployment credentials</h1>
+    <p>The username and password required for this tool are the so called deployment credentials - the same you use to upload files via FTP or Git. <strong>They are not the credentials you use to log into the Azure Management Portal!</strong></p>
+    <p>In your web browser, visit the Azure Management Portal and open up your website's dashboard. There, click on 'Reset Your Deployment Credentials' to enter a username and password.</p>
+    <img src="/images/password-screen.png" />
+    <div id="confirmArea">
+        <button class="js-panelswitch" data-target="#step1" id="helpback">Go Back</button>
+    </div>
+</div>
+
+<!-- Backup -->
+<div class="wrapper" id="backup">
+    <h1 class="title">Backing up your ghost blog</h1>
     <div id="outputArea"></div>
     <div id="scriptLogArea">
         <p id="scriptLog"></p>
     </div>
 </div>
 
-<!-- Help -->
-<div class="wrapper" id="help">
-    <h1 class="title">Ghost Updater for Microsoft Azure Websites</h1>
-    <p>The username and password required for this tool are the so called deployment credentials - the same you use to upload files via FTP or Git. <strong>They are not the credentials you use to log into the Azure Management Portal!</strong></p>
-    <p>In your web browser, visit the Azure Management Portal and open up your website's dashboard. There, click on 'Reset Your Deployment Credentials' to enter a username and password.</p>
-    <img src="/images/password-screen.png" />
+<!-- Update -->
+<div class="wrapper" id="update">
+    <h1 class="title">Updating your ghost blog</h1>
+    <div id="outputArea"></div>
+    <div id="scriptLogArea">
+        <p id="scriptLog"></p>
+    </div>
+</div>
+
+<!-- Backup Restore/Delete -->
+<div class="wrapper" id="backupdisclaimer">
+    <h1 class="title">All done!</h1>
+    <p>We're all done. Please visit your blog and ensure that everything is working well (if the blog loads, you're good). If the blog doesn't load after a few tries or displays an error, you can go back to your backup.</p>
     <div id="confirmArea">
-        <button class="js-panelswitch" data-target="#step1" id="helpback">Go Back</button>
+        <button id="btn-delete-backup">Delete Backup</button>
+        <button id="btn-restore-backup">Restore Backup</button>
     </div>
 </div>
 

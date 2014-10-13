@@ -3,9 +3,10 @@ var UpdaterClient = UpdaterClient || {};
 UpdaterClient.init = function () {
     $('input').bind('input', UpdaterClient.validation.validateConfig);
     $('#ghost-zip').change(UpdaterClient.updater.setGhostPackage);
-    $('.js-panelswitch').click(UpdaterClient.updater.switchPanel);
-    $('#btn-next-s1').click(UpdaterClient.updater.setConfig);
-    $('#btn-start-s3').click(UpdaterClient.updater.startInstallation);
+    $('.js-panelswitch').click(UpdaterClient.utils.switchPanel);
+    $('#btn-setconfig').click(UpdaterClient.updater.setConfig);
+    $('#btn-update').click(UpdaterClient.updater.startInstallation);
+    $('#btn-createbackup').click(UpdaterClient.backup.createBackup);
 
     $.ajax('/nw').done(function(response) {
         if (response.isNodeWebkit) {
@@ -14,5 +15,15 @@ UpdaterClient.init = function () {
         }
     });    
 
-    $('#step1').fadeIn(900);
+    $('#config').fadeIn(900);
+};
+
+UpdaterClient.utils = {
+
+    switchPanel: function (input) {
+        var panel = (input.target) ? input.target.dataset.target : input;
+        $('.wrapper').hide();
+        $(panel).show();
+    }
+
 };

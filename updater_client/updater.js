@@ -8,12 +8,12 @@ UpdaterClient.updater = {
         var loader = '',
         errorText = (error) ? '<span class="error">Error: </span>' : '';
 
-        if ($('#loading')) {
-            $('#loading').remove();
+        if ($('#update > #loading')) {
+            $('#update > #loading').remove();
         }
 
         loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
-        return $('#outputArea').append('<p>' + errorText + text + loader + '</p>');
+        return $('#update > #outputArea').append('<p>' + errorText + text + loader + '</p>');
     },
 
     appendError: function (text) {
@@ -125,8 +125,8 @@ UpdaterClient.updater = {
             scriptRunning = true;
 
             if (response) {                
-                scriptLogArea = scriptLogArea || $('#scriptLogArea');
-                scriptLog = scriptLog || $('#scriptLog');
+                scriptLogArea = scriptLogArea || $('#update > #scriptLogArea');
+                scriptLog = scriptLog || $('#update > #scriptLog');
 
                 scriptLog.text(response);
                 scriptLogArea.show();

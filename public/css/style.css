@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+/* @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700); */
 
 html {
     font: normal 81.2%/1.65 'Open Sans', sans-serif;
@@ -25,7 +25,7 @@ body {
     margin-right: auto;
     margin-left: auto;
     padding: 30px;
-
+    display: none;
     background: #fff;
     box-shadow: rgba(0,0,0,.05) 0 1px 5px;
 }
@@ -36,10 +36,6 @@ body {
     text-shadow: none;
 }
 
-#step1,
-#step2,
-#step3,
-#help,
 #ghost-zip-container {
     display: none;
 }
