@@ -27,6 +27,8 @@ Move-Item -Path ./content/themes/casper/* -Destination D:\home\site\wwwroot\cont
 Move-Item -Path ./index.js -Destination D:\home\site\wwwroot\
 "Moving package.json"
 Move-Item -Path ./package.json -Destination D:\home\site\wwwroot\
+"Creating required elements"
+New-Item -ItemType directory -Path D:\home\site\wwwroot\content\apps
 
 # Cleanup NPM modules
 cd "D:\home\site\wwwroot"
