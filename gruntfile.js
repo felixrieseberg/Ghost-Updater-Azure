@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         watch: {
             all: {
                 files: ['updater_client/**/*.js', 'updater/**/**.js'],
-                tasks: [ 'build' ]
+                tasks: [ 'concat' ]
             }
         },
 
@@ -82,6 +82,6 @@ module.exports = function(grunt) {
     grunt.registerTask('buildwin', ['concat', 'nodewebkit:win']);
     grunt.registerTask('buildunix', ['concat', 'nodewebkit:unix']);
     grunt.registerTask('buildandrun', ['concat', 'nodemon']);
-    grunt.registerTask('dev', ['concurrent']);
+    grunt.registerTask('dev', ['concat', 'concurrent']);
     grunt.registerTask('default', ['jshint']);
 };

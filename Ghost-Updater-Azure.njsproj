@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{8caf995a-6903-4e71-984f-b70eb0be478d}</ProjectGuid>
+        <ProjectHome />
+        <ProjectView>ShowAllFiles</ProjectView>
+        <StartupFile>app.js</StartupFile>
+        <WorkingDirectory>.</WorkingDirectory>
+        <OutputPath>.</OutputPath>
+        <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+    <ItemGroup>
+        <Content Include="index.html" />
+        <Content Include="package.json" />
+        <Content Include="license.md" />
+        <Content Include="readme.md" />
+        <Compile Include="app.js" />
+        <Compile Include="config.js" />
+        <Compile Include="gruntfile.js" />
+        <Content Include="docs\password-screen2.png" />
+        <Content Include="docs\screens.png" />
+        <Compile Include="updater\backup.js" />
+        <Compile Include="updater\errors.js" />
+        <Compile Include="updater\filesfolders.js" />
+        <Compile Include="updater\index.js" />
+        <Compile Include="updater_client\app.js" />
+        <Compile Include="updater_client\backup.js" />
+        <Compile Include="updater_client\config.js" />
+        <Compile Include="updater_client\updater.js" />
+        <Compile Include="updater_client\validation.js" />
+        <Content Include="cache\0.10.5\win\credits.html" />
+        <Content Include="public\css\style.css" />
+        <Content Include="public\images\backup-screen.png" />
+        <Content Include="public\images\icon.png" />
+        <Content Include="public\images\password-screen.png" />
+        <Content Include="public\images\loading.gif" />
+        <Content Include="public\images\favicon.ico" />
+        <Content Include="public\images\icon.ico" />
+        <Compile Include="public\scripts\built.js" />
+        <Compile Include="public\vendor\jquery.js" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="bin" />
+        <Folder Include="builds" />
+        <Folder Include="builds\Ghost-Updater-Azure" />
+        <Folder Include="builds\Ghost-Updater-Azure\win" />
+        <Folder Include="builds\Ghost-Updater-Azure\win\locales" />
+        <Folder Include="cache" />
+        <Folder Include="cache\0.10.5" />
+        <Folder Include="cache\0.10.5\win" />
+        <Folder Include="cache\0.10.5\win\locales" />
+        <Folder Include="docs" />
+        <Folder Include="public" />
+        <Folder Include="public\css" />
+        <Folder Include="public\images" />
+        <Folder Include="public\scripts" />
+        <Folder Include="public\vendor" />
+        <Folder Include="updater" />
+        <Folder Include="updater_client" />
+        <Folder Include="views" />
+        <Folder Include="views\layouts" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+    <ProjectExtensions>
+        <VisualStudio>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+            <WebProjectProperties>
+              <UseIIS>False</UseIIS>
+              <AutoAssignPort>True</AutoAssignPort>
+              <DevelopmentServerPort>0</DevelopmentServerPort>
+              <DevelopmentServerVPath>/</DevelopmentServerVPath>
+              <IISUrl>http://localhost:48022/</IISUrl>
+              <NTLMAuthentication>False</NTLMAuthentication>
+              <UseCustomServer>True</UseCustomServer>
+              <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+              <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+            </WebProjectProperties>
+          </FlavorProperties>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+            <WebProjectProperties>
+              <StartPageUrl>
+              </StartPageUrl>
+              <StartAction>CurrentPage</StartAction>
+              <AspNetDebugging>True</AspNetDebugging>
+              <SilverlightDebugging>False</SilverlightDebugging>
+              <NativeDebugging>False</NativeDebugging>
+              <SQLDebugging>False</SQLDebugging>
+              <ExternalProgram>
+              </ExternalProgram>
+              <StartExternalURL>
+              </StartExternalURL>
+              <StartCmdLineArguments>
+              </StartCmdLineArguments>
+              <StartWorkingDirectory>
+              </StartWorkingDirectory>
+              <EnableENC>False</EnableENC>
+              <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+            </WebProjectProperties>
+          </FlavorProperties>
+        </VisualStudio>
+    </ProjectExtensions>
+</Project>

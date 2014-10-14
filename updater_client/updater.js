@@ -42,7 +42,7 @@ UpdaterClient.updater = {
             .done(function(response) {
                 console.log(response);
                 $('#backuplink').attr('href', url + '/ghost/debug');
-                self.switchPanel('#step2');
+                self.switchPanel('#backupdisclaimer');
             });
         }
     },
@@ -63,6 +63,9 @@ UpdaterClient.updater = {
                 if (response.statusCode === 401) {
                     error = 'Azure rejected the given credentials - username and password are incorrect,';
                     error += 'or are not correct for ' + UpdaterClient.config.url + '.' + nochanges;
+                } else if (response.statusCode === 412) {
+                    error = 'The filesystem at ' + UpdaterClient.config.url + ' does not accept the upload of the Ghost package.';
+                    error +=  nochanges;
                 } else if (response.err.code === 'ENOTFOUND') {
                     error = 'Website ' + UpdaterClient.config.url + ' could not be found. Please ensure that you are connected to the Internet ';
                     error += 'and that the address is correct and restart the updater.' + nochanges;
@@ -145,7 +148,7 @@ UpdaterClient.updater = {
     },
 
     startInstallation: function () {
-        UpdaterClient.updater.switchPanel('#step3');
+        UpdaterClient.utils.switchPanel('#update');
         UpdaterClient.updater.uploadGhost(true);
     }
 };

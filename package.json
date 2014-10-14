@@ -3,11 +3,13 @@
   "version": "0.5.0",
   "private": false,
   "main": "index.html",
-  "maintainers": [{
-     "name": "Felix Rieseberg",
-     "email": "felix.rieseberg@mirosoft.com",
-     "web": "http://www.felixrieseberg.com"
-  }],
+  "maintainers": [
+    {
+      "name": "Felix Rieseberg",
+      "email": "felix.rieseberg@mirosoft.com",
+      "web": "http://www.felixrieseberg.com"
+    }
+  ],
   "bugs": "https://github.com/felixrieseberg/Ghost-Updater-Azure/issues",
   "scripts": {
     "start": "node ./app.js"
@@ -22,7 +24,8 @@
     "request": "^2.44.0",
     "request-enhanced": "^0.1.1",
     "serve-favicon": "~2.1.3",
-    "express-handlebars": "^1.1.0"
+    "express-handlebars": "^1.1.0",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
@@ -43,8 +46,10 @@
     "resizable": false,
     "position": "center"
   },
-  "repositories": [{
-    "type": "git", 
-    "url": "https://github.com/felixrieseberg/Ghost-Updater-Azure.git"
-  }]
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/felixrieseberg/Ghost-Updater-Azure.git"
+    }
+  ]
 }

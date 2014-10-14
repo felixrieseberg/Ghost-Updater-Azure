@@ -1,5 +1,6 @@
 var express         = require('express'),
     debug           = require('debug')('Updater'),
+    _               = require('underscore'),
     router          = express.Router(),
 
     config          = require('../config'),
@@ -33,12 +34,29 @@ router.get('/upload', function (req, res) {
     debug('Uploading Ghost to Azure Website');
     simpleUID = filesfolders.simpleUID();
 
-    filesfolders.upload(config.zippath, 'site/temp/ghost.zip')
+    // Check if file already exists - if so, nuke the folder.
+    filesfolders.list('site/temp')
     .then(function (result) {
-        debug('Upload done, result: ' + result);
-        res.json(result);
-    }).catch(function(error) {
-        res.json({ err: error });
+        var filteredResponse,
+            response = JSON.parse(result[1]) || null;
+
+        debug('Get List Response: ', response);
+
+        filteredResponse = _.findWhere(response, {path: "D:\\home\\site\\temp\\ghost.zip"});
+        debug('Filtered response: ', filteredResponse);
+        if (filteredResponse) {
+            debug('Ghost.zip already exists, deleting /temp folder.')
+            return filesfolders.rmDir('site/temp');
+        }
+        return;
+    }).then(function() {
+        filesfolders.upload(config.zippath, 'site/temp/ghost.zip')
+        .then(function (result) {
+            debug('Upload done, result: ' + result);
+            res.json(result);
+        }).catch(function(error) {
+            res.json({ err: error });
+        });
     });
 });
 

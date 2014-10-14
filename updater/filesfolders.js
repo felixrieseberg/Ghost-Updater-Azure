@@ -32,7 +32,7 @@ var filesfolders = {
     mk: function (target, isDir) {
         target = (isDir) ? target + '/' : target;
 
-        return request.putAsync(config.website + '/api/vfs/site/' + target, {
+        return request.putAsync(config.website + '/api/vfs/' + target, {
             'auth': auth,
         }).then(function(response) {
             if (response.statusCode === '409') {
@@ -43,13 +43,21 @@ var filesfolders = {
     },
 
     rm: function (target, isDir) {
-        target = (isDir) ? target + '/' : target;
+        target = (isDir) ? target + '/?recursive=true' : target;
 
-        return request.delAsync(config.website + '/api/vfs/site/' + target, {
-            'auth': auth
+        return request.delAsync(config.website + '/api/vfs/' + target, {
+            'auth': config.auth()
         }).then(function(response) {
+            debug('Delete: ', response);
             return response;
         }).catch(console.log);    
+    },
+
+    list: function (target) {
+        var targetUrl = config.website + '/api/vfs/' + target + '/';
+
+        debug('Listing dir for ' + targetUrl);
+        return request.getAsync(targetUrl, {'auth': config.auth()});
     },
 
     upload: function (source, target) {
