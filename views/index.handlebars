@@ -15,7 +15,7 @@
         <div class="row">
             <label for="blog-password">Deployment Password</label>
             <input id="blog-password" type="password" required>
-            <p><strong>Do not</strong> use the username/password you use to log into Azure. <a data-target="#help" class="js-panelswitch" href="#">Where do I find my deployment credentials?</a></p>
+            <p><strong>Do not</strong> use the username/password you use to log into Azure. <a data-action="UpdaterClient.utils.switchPanel" data-target="#help" href="#">Where do I find my deployment credentials?</a></p>
         </div>
         <div class="row" id="ghost-zip-container">
             <label for="ghost-zip">Ghost Package</label>
@@ -23,7 +23,7 @@
         </div>
     </div>
     <div id="confirmArea">
-        <button data-target="#backupdisclaimer" id="btn-setconfig">Continue</button>
+        <button data-action="UpdaterClient.config.setConfig">Continue</button>
     </div>
 </div>
 
@@ -34,9 +34,9 @@
     <p>Alternatively, go to <a id="backuplink">your site's debug page</a> and press the export button to download a file containing your blog's settings and posts. This tool can't restore from this file.</p>
     <p><strong>In either case, please stop changing your blog's content now.</strong></p>
     <div id="confirmArea">
-        <button class="js-panelswitch" data-target="#config" id="btn-back-s2">Back</button>
-        <button class="js-update warning">Update without Backup</button>
-        <button id="btn-createbackup">Update with Backup</button>
+        <button data-action="UpdaterClient.utils.switchPanel" data-target="#config" id="btn-back-s2">Back</button>
+        <button data-actin="UpdaterClient.updater.startInstallation" class="warning">Update without Backup</button>
+        <button data-action="UpdaterClient.backup.startBackup">Update with Backup</button>
     </div>
 </div>
 
@@ -48,7 +48,7 @@
     <p>In your web browser, visit the Azure Management Portal and open up your website's dashboard. There, click on 'Reset Your Deployment Credentials' to enter a username and password.</p>
     <img src="/images/password-screen.png" />
     <div id="confirmArea">
-        <button class="js-panelswitch" data-target="#config" id="helpback">Go Back</button>
+        <button data-action="UpdaterClient.utils.switchPanel" data-target="#config" id="helpback">Go Back</button>
     </div>
 </div>
 
@@ -56,6 +56,7 @@
 <div class="wrapper" id="backup">
     <h1 class="title">Backing up your ghost blog</h1>
     <div id="backupOutputArea" class="outputArea"></div>
+    <h4 class="scriptLogTitle">Live Script Output</h4>
     <div id="backupScriptLogArea" class="scriptLogArea">
         <p id="backupScriptLog"></p>
     </div>
@@ -64,19 +65,20 @@
 <!-- Update -->
 <div class="wrapper" id="update">
     <h1 class="title">Updating your ghost blog</h1>
-    <div id="outputArea"></div>
+    <div id="updateOutputArea"></div>
+    <h4 class="scriptLogTitle">Live Script Output</h4>
     <div id="updateScriptLogArea" class="outputArea">
         <p id="updateScriptLog" class="scriptLogArea"></p>
     </div>
 </div>
 
 <!-- Backup Restore/Delete -->
-<div class="wrapper" id="backupdisclaimer">
+<div class="wrapper" id="updatefinished">
     <h1 class="title">All done!</h1>
     <p>We're all done. Please visit your blog and ensure that everything is working well (if the blog loads, you're good). If the blog doesn't load after a few tries or displays an error, you can go back to your backup.</p>
     <div id="confirmArea">
-        <button id="btn-delete-backup">Delete Backup</button>
-        <button id="btn-restore-backup">Restore Backup</button>
+        <button data-action="UpdaterClient.backup.deleteBackup">Delete Backup</button>
+        <button data-action="UpdaterClient.backup.restoreBackup">Restore Backup</button>
     </div>
 </div>
 

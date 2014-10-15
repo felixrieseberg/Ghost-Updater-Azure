@@ -1,47 +1,43 @@
-/*! Ghost-Updater-Azure - v0.5.0 - 2014-10-14 */var UpdaterClient = UpdaterClient || {};
+/*! Ghost-Updater-Azure - v0.5.0 - 2014-10-15 */var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.init = function () {
+    UpdaterClient.config.getConfig();
+
+    // Wire up buttons to actions
     $('input').bind('input', UpdaterClient.validation.validateConfig);
     $('#ghost-zip').change(UpdaterClient.updater.setGhostPackage);
-    $('.js-panelswitch').click(UpdaterClient.utils.switchPanel);
-    $('#btn-setconfig').click(UpdaterClient.updater.setConfig);
-    $('.js-update').click(UpdaterClient.updater.startInstallation);
-    $('#btn-createbackup').click(UpdaterClient.backup.startBackup);
 
-    $.ajax('/nw').done(function(response) {
-        if (response.isNodeWebkit) {
-            UpdaterClient.config.standalone = true;
-            $('#ghost-zip-container').show();
+    // Defining actions and handlers here is okay, but feels dirty.
+    // This allows us to define actions with the data-action attribute.
+    $('body').on('click', '[data-action]', function() {
+        var action = $(this).data('action'),
+            split = (action) ? action.split('.') : null,
+            fn = window;
+        
+        for (var i = 0; i < split.length; i++) {
+            fn = (fn) ? fn[split[i]] : null;
+        }
+
+        if (typeof fn === 'function') {
+            fn.apply(null, arguments);
         }
     });
 
-    $('#backupdisclaimer').fadeIn(900);
-};
-
-UpdaterClient.utils = {
-
-    switchPanel: function (input) {
-        var panel = (input.target) ? input.target.dataset.target : input;
-        $('.wrapper').hide();
-        $(panel).show();
-    }
-
+    $('#config').fadeIn(900);
 };var UpdaterClient = UpdaterClient || {}; 
 
 UpdaterClient.backup = {
 
     scriptsDeployed: false,
+    deletingOldBackup: false,
+    creatingBackup: false,
+    backupFinished: false,
+    bScriptLogArea: null,
+    bScriptLog: null,
+    scriptLogTitle: null,
 
     appendLog: function (text, loading, error) {
-        var loader = '',
-        errorText = (error) ? '<span class="error">Error: </span>' : '';
-
-        if ($('#loading')) {
-            $('#loading').remove();
-        }
-
-        loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
-        return $('#backupOutputArea').append('<p>' + errorText + text + loader + '</p>');
+        return UpdaterClient.utils.appendLog(text, loading, error, '#backupOutputArea');
     },
 
     appendError: function (text) {
@@ -52,7 +48,7 @@ UpdaterClient.backup = {
         var self = this;
         this.appendLog('Deploying backup scripts to Azure Website', true);
 
-        $.ajax('/backup/deploy').done(function(response) {
+        $.ajax('/backup/deploy').done(function () {
             self.appendLog('Scripts successfully deployed');
             self.scriptsDeployed = true;
 
@@ -66,7 +62,7 @@ UpdaterClient.backup = {
         var self = this;
         this.appendLog('Instructing Azure to create backup (this might take a while)', true);
         
-        $.post('/backup/create').done(function(response) {
+        $.post('/backup/create').done(function (response) {
             if (response) {
                 console.log('Triggered create, getting status');
                 self.getScriptStatus('create');
@@ -76,9 +72,12 @@ UpdaterClient.backup = {
 
     deleteBackup: function () {
         var self = this;
+
+        $('#backup > .title').text('Deleting Backup');
+        UpdaterClient.utils.switchPanel('#backup');
         this.appendLog('Instructing Azure to delete backup', true);
         
-        $.post('/backup/delete').done(function(response) {
+        $.post('/backup/delete').done(function (response) {
             if (response) {
                 self.getScriptStatus('delete');
             }
@@ -86,10 +85,13 @@ UpdaterClient.backup = {
     },
 
     restoreBackup: function () {
-        var self = this;
-        this.appendLog('Instructing Azure to restore backup (this might take a while)', true);
+        var self = UpdaterClient.backup;
+
+        $('#backup > .title').text('Restoring Backup');
+        UpdaterClient.utils.switchPanel('#backup');
+        self.appendLog('Instructing Azure to restore backup (this might take a while)', true);
         
-        $.post('/backup/restore').done(function(response) {
+        $.post('/backup/restore').done(function (response) {
             if (response) {
                 self.getScriptStatus('restore');
             }
@@ -97,37 +99,76 @@ UpdaterClient.backup = {
     },
 
     getScriptStatus: function (script) {
-        var self = this;
+        var self = UpdaterClient.backup;
 
         $.ajax({
             url: '/backup/' + script,
             dataType: 'text'
-        }).done(function(response) {
-            scriptRunning = true;
+        }).done(function (response) {
+            var repeat = false,
+                now = new Date().toLocaleTimeString();
 
-            if (response) {                
-                scriptLogArea = scriptLogArea || $('#backupScriptLogArea');
-                scriptLog = scriptLog || $('#backupScriptLog');
+            if (response) {
+                self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
+                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
+                self.scriptLogTitle.show();
+                self.bScriptLog = self.bScriptLog || $('#backupScriptLog');
+                self.bScriptLog.innerText = response;
+                self.bScriptLogArea = self.bScriptLogArea || $('#backupScriptLogArea');
+                self.bScriptLogArea.show();
+                self.bScriptLogArea.scrollTop(self.bScriptLogArea.scrollHeight);
+            }
 
-                scriptLog.text(response);
-                scriptLogArea.show();
-                scriptLogArea.scrollTop(scriptLogArea.scrollHeight);
-
-                if (response.indexOf('Status changed to Success') > -1) {
-                    // We're done!
-                    scriptRunning = false;
+            if (response && !self.backupFinished && script === 'create') {
+                // Done
+                if (response.indexOf('Status changed to Success') > -1 && !self.backupFinished) {
                     self.appendLog('All done, initiating update!', false);
+                    self.backupFinished = true;
 
-                    scriptLogArea.hide().delay(500).queue(function() {
-                         scriptLogArea.empty();
+                    setTimeout(function() {
                          UpdaterClient.updater.startInstallation();
-                    });
+                         self.bScriptLog.empty();
+                         $('#backupOutputArea').empty();
+                    }, 300);
+                } 
 
-                } else {
-                    scriptLog.delay(300).queue(function() {
-                        self.getScriptStatus(script);
-                    });
+                // Removing old backup
+                if (response.indexOf('Removing old backup') > -1 && !self.deletingOldBackup) {
+                    self.appendLog('Removing old backup', true);
+                    self.deletingOldBackup = true;
                 }
+
+                // Copying folder
+                if (response.indexOf('Creating Full Site Backup') > -1 && !self.creatingBackup) {
+                    self.appendLog('Backing up files', true);
+                    self.creatingBackup = true;
+                } 
+                
+                repeat = true;
+            }
+
+            if (response && script === 'delete') {
+                // Done
+                if (response.indexOf('Status changed to Success') > -1) {
+                    self.appendLog('All done, backup deleted!', false);
+                    self.appendLog('You can now close this tool.', false);
+                } else {
+                    repeat = true;
+                }
+            }
+
+            if (response && script === 'restore') {
+                // Done
+                if (response.indexOf('Status changed to Success') > -1) {
+                    self.appendLog('All done, backup restored. We\'re sorry that we could not update your blog, but everything is like it was before.', false);
+                    self.appendLog('You can now close this tool.', false);
+                } else {
+                    repeat = true;
+                }
+            }
+
+            if (repeat) {
+                setTimeout(function() { self.getScriptStatus(script); }, 800);
             }
         });
     },
@@ -145,38 +186,9 @@ UpdaterClient.config = {
     password: '',
     zippath: '',
     standalone: undefined,
-    backup: false
-};var UpdaterClient = UpdaterClient || {}; 
-
-var url, scriptLog, scriptLogArea, scriptRunning;
-
-UpdaterClient.updater = {
-
-    appendLog: function (text, loading, error) {
-        var loader = '',
-        errorText = (error) ? '<span class="error">Error: </span>' : '';
-
-        if ($('#loading')) {
-            $('#loading').remove();
-        }
-
-        loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
-        return $('#outputArea').append('<p>' + errorText + text + loader + '</p>');
-    },
-
-    appendError: function (text) {
-        return this.appendLog(text, false, true);
-    },
-
-    switchPanel: function (input) {
-        var panel = (input.target) ? input.target.dataset.target : input;
-        $('.wrapper').hide();
-        $(panel).show();
-    },
+    backup: false,
 
     setConfig: function () {
-        var self = UpdaterClient.updater;
-
         if (UpdaterClient.validation.validateConfig('default')) {
             $.ajax({
                 url: '/updater/config',
@@ -189,10 +201,38 @@ UpdaterClient.updater = {
             })
             .done(function(response) {
                 console.log(response);
-                $('#backuplink').attr('href', url + '/ghost/debug');
-                self.switchPanel('#backupdisclaimer');
+                UpdaterClient.utils.switchPanel('#backupdisclaimer');
             });
         }
+    },
+
+    getConfig: function () {
+        $.ajax('/nw').done(function (response) {
+            console.log(response);
+            if (response.isNodeWebkit) {
+                UpdaterClient.config.standalone = true;
+                $('#ghost-zip-container').show();
+            }
+        });
+    }
+};
+
+var UpdaterClient = UpdaterClient || {}; 
+
+UpdaterClient.updater = {
+
+    updateFinished: false,
+    scriptRunning: false,
+    scriptLogTitle: null,
+    scriptLogArea: null,
+    scriptLog: null,
+
+    appendLog: function (text, loading, error) {
+        return UpdaterClient.utils.appendLog(text, loading, error, '#updateOutputArea');
+    },
+
+    appendError: function (text) {
+        return this.appendLog(text, false, true);
     },
 
     uploadGhost: function (propagate) {
@@ -265,31 +305,44 @@ UpdaterClient.updater = {
     getScriptStatus: function () {
         var self = this;
 
-        if (!scriptRunning) {
+        if (!this.scriptRunning) {
             this.appendLog('Trying to get status of update script on Azure Website', true);
+            this.scriptRunning = true;
         }
 
         $.ajax({
             url: '/updater/info',
             dataType: 'text'
-        }).done(function(response) {
-            scriptRunning = true;
+        }).done(function (response) {
+            var now = new Date().toLocaleTimeString();
 
-            if (response) {                
-                scriptLogArea = scriptLogArea || $('#updateScriptLogArea');
-                scriptLog = scriptLog || $('#updateScriptLog');
-
-                scriptLog.text(response);
-                scriptLogArea.show();
-                scriptLogArea.scrollTop(scriptLogArea.scrollHeight);
+            if (response && !self.updateFinished) {   
+                self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
+                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
+                self.scriptLogTitle.show();            
+                self.scriptLog = self.scriptLog || $('#updateScriptLog');
+                self.scriptLog.innerText = response;
+                self.scriptLog.show();
+                self.scriptLogArea = self.scriptLogArea || $('#updateScriptLogArea');
+                self.scriptLogArea.show();
+                self.scriptLogArea.scrollTop(self.scriptLogArea.scrollHeight);
 
                 if (response.indexOf('Status changed to Success') > -1) {
                     // We're done!
-                    scriptLogArea.hide();
+                    self.scriptLogArea.hide();
                     self.appendLog('All done, your blog has been updated!', false);
-                } else {
-                    self.getScriptStatus();
+                    self.updateFinished = true;
+
+                    setTimeout(function() { UpdaterClient.utils.switchPanel('#updatefinished'); }, 500);
                 }
+                
+                setTimeout(function() { self.getScriptStatus(); }, 800);
+            }
+        }).fail(function (error) {
+            console.log(error);
+
+            if (!self.updateFinished) {
+                setTimeout(function() { self.getScriptStatus(); }, 1000);
             }
         });
 
@@ -299,6 +352,28 @@ UpdaterClient.updater = {
         UpdaterClient.utils.switchPanel('#update');
         UpdaterClient.updater.uploadGhost(true);
     }
+};var UpdaterClient = UpdaterClient || {}; 
+
+UpdaterClient.utils = {
+
+    switchPanel: function (input) {
+        var panel = (input.target) ? input.target.dataset.target : input;
+        $('.wrapper').hide();
+        $(panel).show();
+    },
+
+    appendLog: function (text, loading, error, target) {
+        var loader = '',
+        errorText = (error) ? '<span class="error">Error: </span>' : '';
+
+        if ($('#loading')) {
+            $('#loading').remove();
+        }
+
+        loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
+        return $(target).append('<p>' + errorText + text + loader + '</p>');
+    }
+
 };var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.validation = {

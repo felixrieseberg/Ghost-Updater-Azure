@@ -1,21 +1,17 @@
 var UpdaterClient = UpdaterClient || {}; 
 
-var bScriptLog, bScriptLogArea;
-
 UpdaterClient.backup = {
 
     scriptsDeployed: false,
+    deletingOldBackup: false,
+    creatingBackup: false,
+    backupFinished: false,
+    bScriptLogArea: null,
+    bScriptLog: null,
+    scriptLogTitle: null,
 
     appendLog: function (text, loading, error) {
-        var loader = '',
-        errorText = (error) ? '<span class="error">Error: </span>' : '';
-
-        if ($('#loading')) {
-            $('#loading').remove();
-        }
-
-        loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
-        return $('#backupOutputArea').append('<p>' + errorText + text + loader + '</p>');
+        return UpdaterClient.utils.appendLog(text, loading, error, '#backupOutputArea');
     },
 
     appendError: function (text) {
@@ -50,6 +46,9 @@ UpdaterClient.backup = {
 
     deleteBackup: function () {
         var self = this;
+
+        $('#backup > .title').text('Deleting Backup');
+        UpdaterClient.utils.switchPanel('#backup');
         this.appendLog('Instructing Azure to delete backup', true);
         
         $.post('/backup/delete').done(function (response) {
@@ -60,8 +59,11 @@ UpdaterClient.backup = {
     },
 
     restoreBackup: function () {
-        var self = this;
-        this.appendLog('Instructing Azure to restore backup (this might take a while)', true);
+        var self = UpdaterClient.backup;
+
+        $('#backup > .title').text('Restoring Backup');
+        UpdaterClient.utils.switchPanel('#backup');
+        self.appendLog('Instructing Azure to restore backup (this might take a while)', true);
         
         $.post('/backup/restore').done(function (response) {
             if (response) {
@@ -71,34 +73,76 @@ UpdaterClient.backup = {
     },
 
     getScriptStatus: function (script) {
-        var self = this;
+        var self = UpdaterClient.backup;
 
         $.ajax({
             url: '/backup/' + script,
             dataType: 'text'
         }).done(function (response) {
-            if (response) {                
-                bScriptLogArea = bScriptLogArea || $('#backupbScriptLogArea');
-                bScriptLog = bScriptLog || $('#backupScriptLog');
+            var repeat = false,
+                now = new Date().toLocaleTimeString();
 
-                bScriptLog.text(response);
-                bScriptLogArea.show();
-                bScriptLogArea.scrollTop(bScriptLogArea.scrollHeight);
+            if (response) {
+                self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
+                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
+                self.scriptLogTitle.show();
+                self.bScriptLog = self.bScriptLog || $('#backupScriptLog');
+                self.bScriptLog.innerText = response;
+                self.bScriptLogArea = self.bScriptLogArea || $('#backupScriptLogArea');
+                self.bScriptLogArea.show();
+                self.bScriptLogArea.scrollTop(self.bScriptLogArea.scrollHeight);
+            }
 
-                if (response.indexOf('Status changed to Success') > -1) {
-                    // We're done!
+            if (response && !self.backupFinished && script === 'create') {
+                // Done
+                if (response.indexOf('Status changed to Success') > -1 && !self.backupFinished) {
                     self.appendLog('All done, initiating update!', false);
+                    self.backupFinished = true;
 
-                    bScriptLogArea.hide().delay(500).queue(function() {
-                         bScriptLogArea.empty();
+                    setTimeout(function() {
                          UpdaterClient.updater.startInstallation();
-                    });
+                         self.bScriptLog.empty();
+                         $('#backupOutputArea').empty();
+                    }, 300);
+                } 
 
-                } else {
-                    bScriptLog.delay(300).queue(function() {
-                        self.getScriptStatus(script);
-                    });
+                // Removing old backup
+                if (response.indexOf('Removing old backup') > -1 && !self.deletingOldBackup) {
+                    self.appendLog('Removing old backup', true);
+                    self.deletingOldBackup = true;
                 }
+
+                // Copying folder
+                if (response.indexOf('Creating Full Site Backup') > -1 && !self.creatingBackup) {
+                    self.appendLog('Backing up files', true);
+                    self.creatingBackup = true;
+                } 
+                
+                repeat = true;
+            }
+
+            if (response && script === 'delete') {
+                // Done
+                if (response.indexOf('Status changed to Success') > -1) {
+                    self.appendLog('All done, backup deleted!', false);
+                    self.appendLog('You can now close this tool.', false);
+                } else {
+                    repeat = true;
+                }
+            }
+
+            if (response && script === 'restore') {
+                // Done
+                if (response.indexOf('Status changed to Success') > -1) {
+                    self.appendLog('All done, backup restored. We\'re sorry that we could not update your blog, but everything is like it was before.', false);
+                    self.appendLog('You can now close this tool.', false);
+                } else {
+                    repeat = true;
+                }
+            }
+
+            if (repeat) {
+                setTimeout(function() { self.getScriptStatus(script); }, 800);
             }
         });
     },

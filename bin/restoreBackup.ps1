@@ -3,7 +3,7 @@
 
 cd "D:\home\site\"
 If (Test-Path ./wwwroot-backup/) {
-    Remove-Item -Path ./wwwroot-backup -Recurse
+    Remove-Item -Path ./wwwroot -Recurse
     Rename-Item D:\home\site\wwwroot-backup wwwroot
 }
 Else {

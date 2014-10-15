@@ -33,7 +33,21 @@ New-Item -ItemType directory -Path D:\home\site\wwwroot\content\apps -ErrorActio
 # Cleanup NPM modules
 cd "D:\home\site\wwwroot"
 "Running npm install (production)"
+Stop-Process -processname node
 npm install --production
+
+# Install node-sqlite3 bindings for both the 32 and 64-bit Windows architecture.
+# node-sqlite3 will build the bindings using the system architecture and version of node that you're running the install
+
+# Force install of the 32-bit version, then move the lib to temporary location
+Write-Output "Installing SQLite3 x32 Module"
+& npm install sqlite3 --target_arch=ia32
+Move-Item ".\node_modules\sqlite3\lib\binding\node-v11-win32-ia32\" -Destination ".\temp"
+
+# Force install of the 64-bit version, then copy 32-bit back
+Write-Output "Installing SQLite3 x64 Module"
+& npm install sqlite3 --target_arch=x64
+Move-Item ".\temp" -Destination ".\node_modules\sqlite3\lib\binding\node-v11-win32-ia32\"
 
 # Cleanup
 "We're done, cleaning up!"

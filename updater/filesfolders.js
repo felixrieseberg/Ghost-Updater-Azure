@@ -7,11 +7,6 @@ var config      = require('../config'),
 Promise.promisifyAll(request);
 Promise.promisifyAll(fs);
 
-var auth = {
-    'user': config.user,
-    'pass': config.password
-};
-
 var filesfolders = {
     mkDir: function (dir) {
         return this.mk(dir, true);
@@ -33,7 +28,7 @@ var filesfolders = {
         target = (isDir) ? target + '/' : target;
 
         return request.putAsync(config.website + '/api/vfs/' + target, {
-            'auth': auth,
+            'auth': config.auth(),
         }).then(function(response) {
             return response;
         }).catch(console.log);

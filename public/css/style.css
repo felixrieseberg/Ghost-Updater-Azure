@@ -1,10 +1,12 @@
-/* @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700); */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 
-html {
+html
+{
     font: normal 81.2%/1.65 'Open Sans', sans-serif;
 }
 
-body {
+body
+{
     font-family: 'Open Sans', sans-serif;
     font-size: 15px;
     font-weight: 300;
@@ -17,46 +19,55 @@ body {
     background-color: rgb(237, 236, 228);
 }
 
-.wrapper {
+.wrapper
+{
     position: relative;
+
+    display: none;
 
     width: 760px;
     height: 560px;
     margin-right: auto;
     margin-left: auto;
     padding: 30px;
-    display: none;
+
     background: #fff;
     box-shadow: rgba(0,0,0,.05) 0 1px 5px;
 }
 
-.wrapper::selection {
+.wrapper::selection
+{
     color: #242628;
     background: #b3d5f3;
     text-shadow: none;
 }
 
-#ghost-zip-container {
+#ghost-zip-container
+{
     display: none;
 }
 
-#confirmArea {
+#confirmArea
+{
     position: absolute;
     bottom: 30px;
 }
 
-.col {
+.col
+{
     float: left;
 
     width: 245px;
     margin-right: 28px;
 }
 
-.col:last-child {
+.col:last-child
+{
     margin-right: 0;
 }
 
-.title {
+.title
+{
     font-size: 1.6em;
     font-weight: normal;
     line-height: .8em;
@@ -72,12 +83,14 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-.title::selection {
+.title::selection
+{
     color: #242628;
     background: #b3d5f3;
 }
 
-input {
+input
+{
     font-size: 1.1rem;
     font-weight: normal;
 
@@ -96,19 +109,23 @@ input {
     border-radius: 2px;
 }
 
-label {
+label
+{
     text-align: left;
 }
 
-input.invalid {
+input.invalid
+{
     background-color: #f2c5c3;
 }
 
-input.valid {
+input.valid
+{
     border-bottom: #caf2b4;
 }
 
-label {
+label
+{
     font-size: 1em;
     font-weight: bold;
 
@@ -119,7 +136,8 @@ label {
     color: #242628;
 }
 
-button {
+button
+{
     font-size: 11px;
     font-weight: 300;
     line-height: 13px;
@@ -151,7 +169,8 @@ button {
     -webkit-appearance: button;
 }
 
-button:hover {
+button:hover
+{
     text-decoration: none;
 
     border-color: transparent;
@@ -161,17 +180,29 @@ button:hover {
     will-change: border-color, background;
 }
 
-#outputArea img {
+.outputArea img
+{
     margin-bottom: -3px;
 }
 
-.error {
+.error
+{
     font-weight: bold;
 
     color: red;
 }
 
-#scriptLogArea {
+.warning
+{
+    background-color: #e55b5b;
+}
+
+.warning:hover {
+    background-color: #CF2121;
+}
+
+.scriptLogArea
+{
     font-size: 11px;
 
     position: absolute;
@@ -182,7 +213,14 @@ button:hover {
     overflow-x: visible;
 
     width: 765px;
-    height: 250px;
+    height: 200px;
 
     overflow-wrap: break-word;
+}
+
+.scriptLogTitle
+{
+    position: absolute;
+    bottom: 210px;
+    display: none;
 }

@@ -1,50 +1,19 @@
 var UpdaterClient = UpdaterClient || {}; 
 
-var url, scriptLog, scriptLogArea, scriptRunning;
-
 UpdaterClient.updater = {
 
+    updateFinished: false,
+    scriptRunning: false,
+    scriptLogTitle: null,
+    scriptLogArea: null,
+    scriptLog: null,
+
     appendLog: function (text, loading, error) {
-        var loader = '',
-        errorText = (error) ? '<span class="error">Error: </span>' : '';
-
-        if ($('#loading')) {
-            $('#loading').remove();
-        }
-
-        loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
-        return $('#outputArea').append('<p>' + errorText + text + loader + '</p>');
+        return UpdaterClient.utils.appendLog(text, loading, error, '#updateOutputArea');
     },
 
     appendError: function (text) {
         return this.appendLog(text, false, true);
-    },
-
-    switchPanel: function (input) {
-        var panel = (input.target) ? input.target.dataset.target : input;
-        $('.wrapper').hide();
-        $(panel).show();
-    },
-
-    setConfig: function () {
-        var self = UpdaterClient.updater;
-
-        if (UpdaterClient.validation.validateConfig('default')) {
-            $.ajax({
-                url: '/updater/config',
-                data: { 
-                    url: UpdaterClient.config.url, 
-                    username: UpdaterClient.config.username, 
-                    password: UpdaterClient.config.password, 
-                    zippath: UpdaterClient.config.zippath 
-                }
-            })
-            .done(function(response) {
-                console.log(response);
-                $('#backuplink').attr('href', url + '/ghost/debug');
-                self.switchPanel('#backupdisclaimer');
-            });
-        }
     },
 
     uploadGhost: function (propagate) {
@@ -117,31 +86,44 @@ UpdaterClient.updater = {
     getScriptStatus: function () {
         var self = this;
 
-        if (!scriptRunning) {
+        if (!this.scriptRunning) {
             this.appendLog('Trying to get status of update script on Azure Website', true);
+            this.scriptRunning = true;
         }
 
         $.ajax({
             url: '/updater/info',
             dataType: 'text'
-        }).done(function(response) {
-            scriptRunning = true;
+        }).done(function (response) {
+            var now = new Date().toLocaleTimeString();
 
-            if (response) {                
-                scriptLogArea = scriptLogArea || $('#updateScriptLogArea');
-                scriptLog = scriptLog || $('#updateScriptLog');
-
-                scriptLog.text(response);
-                scriptLogArea.show();
-                scriptLogArea.scrollTop(scriptLogArea.scrollHeight);
+            if (response && !self.updateFinished) {   
+                self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
+                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
+                self.scriptLogTitle.show();            
+                self.scriptLog = self.scriptLog || $('#updateScriptLog');
+                self.scriptLog.innerText = response;
+                self.scriptLog.show();
+                self.scriptLogArea = self.scriptLogArea || $('#updateScriptLogArea');
+                self.scriptLogArea.show();
+                self.scriptLogArea.scrollTop(self.scriptLogArea.scrollHeight);
 
                 if (response.indexOf('Status changed to Success') > -1) {
                     // We're done!
-                    scriptLogArea.hide();
+                    self.scriptLogArea.hide();
                     self.appendLog('All done, your blog has been updated!', false);
-                } else {
-                    self.getScriptStatus();
+                    self.updateFinished = true;
+
+                    setTimeout(function() { UpdaterClient.utils.switchPanel('#updatefinished'); }, 500);
                 }
+                
+                setTimeout(function() { self.getScriptStatus(); }, 800);
+            }
+        }).fail(function (error) {
+            console.log(error);
+
+            if (!self.updateFinished) {
+                setTimeout(function() { self.getScriptStatus(); }, 1000);
             }
         });
 

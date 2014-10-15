@@ -1,29 +1,27 @@
 var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.init = function () {
+    UpdaterClient.config.getConfig();
+
+    // Wire up buttons to actions
     $('input').bind('input', UpdaterClient.validation.validateConfig);
     $('#ghost-zip').change(UpdaterClient.updater.setGhostPackage);
-    $('.js-panelswitch').click(UpdaterClient.utils.switchPanel);
-    $('#btn-setconfig').click(UpdaterClient.updater.setConfig);
-    $('.js-update').click(UpdaterClient.updater.startInstallation);
-    $('#btn-createbackup').click(UpdaterClient.backup.startBackup);
 
-    $.ajax('/nw').done(function(response) {
-        if (response.isNodeWebkit) {
-            UpdaterClient.config.standalone = true;
-            $('#ghost-zip-container').show();
+    // Defining actions and handlers here is okay, but feels dirty.
+    // This allows us to define actions with the data-action attribute.
+    $('body').on('click', '[data-action]', function() {
+        var action = $(this).data('action'),
+            split = (action) ? action.split('.') : null,
+            fn = window;
+        
+        for (var i = 0; i < split.length; i++) {
+            fn = (fn) ? fn[split[i]] : null;
+        }
+
+        if (typeof fn === 'function') {
+            fn.apply(null, arguments);
         }
     });
 
-    $('#backupdisclaimer').fadeIn(900);
-};
-
-UpdaterClient.utils = {
-
-    switchPanel: function (input) {
-        var panel = (input.target) ? input.target.dataset.target : input;
-        $('.wrapper').hide();
-        $(panel).show();
-    }
-
+    $('#config').fadeIn(900);
 };
