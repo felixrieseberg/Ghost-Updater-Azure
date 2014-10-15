@@ -5,17 +5,17 @@ UpdaterClient.init = function () {
     $('#ghost-zip').change(UpdaterClient.updater.setGhostPackage);
     $('.js-panelswitch').click(UpdaterClient.utils.switchPanel);
     $('#btn-setconfig').click(UpdaterClient.updater.setConfig);
-    $('#btn-update').click(UpdaterClient.updater.startInstallation);
-    $('#btn-createbackup').click(UpdaterClient.backup.createBackup);
+    $('.js-update').click(UpdaterClient.updater.startInstallation);
+    $('#btn-createbackup').click(UpdaterClient.backup.startBackup);
 
     $.ajax('/nw').done(function(response) {
         if (response.isNodeWebkit) {
             UpdaterClient.config.standalone = true;
             $('#ghost-zip-container').show();
         }
-    });    
+    });
 
-    $('#config').fadeIn(900);
+    $('#backupdisclaimer').fadeIn(900);
 };
 
 UpdaterClient.utils = {

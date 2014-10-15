@@ -1,8 +1,8 @@
 var express         = require('express'),
-    debug           = require('debug')('Updater'),
+    debug           = require('debug')('Backup'),
     router          = express.Router(),
+    Promise         = require('bluebird'),
 
-    config          = require('../config'),
     filesfolders    = require('./filesfolders');
 
 var createScriptRunning, createScriptLog,
@@ -16,9 +16,10 @@ router.get('/deploy', function (req, res) {
         remove = filesfolders.uploadWebjob('./bin/removeBackup.ps1', 'removeBackup.ps1'),
         restore = filesfolders.uploadWebjob('./bin/restoreBackup.ps1', 'restoreBackup.ps1');
 
-    return Promise.settle([create, remove, restore]).then(function (results) {
+    return Promise.all([create, remove, restore])
+    .then(function (results) {
         debug('Upload done, result: ' + results);
-        res.json(results);
+        return res.json({ status: 'Scripts deployed' });
     });
 });
 
@@ -28,6 +29,7 @@ router.post('/create', function (req, res) {
     return filesfolders.triggerWebjob('createBackup.ps1')
     .then(function (result) {
         debug('Trigger successful, result: ' + result);
+        return res.json(result);
     });
 });
 

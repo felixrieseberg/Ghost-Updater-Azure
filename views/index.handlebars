@@ -30,12 +30,13 @@
 <!-- Backup Disclaimer -->
 <div class="wrapper" id="backupdisclaimer">
     <h1 class="title">Save your stuff</h1>
-    <p>It's unlikely that things go wrong, but it's better to be safe than sorry. We can create a full backup (including all files). Once the update is done, you can either restore or delete it.</p>
+    <p>It's unlikely that things go wrong, but it's better to be safe than sorry. We can create a full backup (including all files). Once the update is done, you can either restore or delete it. This is heavily recommended.</p>
     <p>Alternatively, go to <a id="backuplink">your site's debug page</a> and press the export button to download a file containing your blog's settings and posts. This tool can't restore from this file.</p>
+    <p><strong>In either case, please stop changing your blog's content now.</strong></p>
     <div id="confirmArea">
         <button class="js-panelswitch" data-target="#config" id="btn-back-s2">Back</button>
-        <button id="btn-backup-create">Create Backup</button>
-        <button id="btn-update">Skip Backup, Start Update</button>
+        <button class="js-update warning">Update without Backup</button>
+        <button id="btn-createbackup">Update with Backup</button>
     </div>
 </div>
 
@@ -54,9 +55,9 @@
 <!-- Backup -->
 <div class="wrapper" id="backup">
     <h1 class="title">Backing up your ghost blog</h1>
-    <div id="outputArea"></div>
-    <div id="scriptLogArea">
-        <p id="scriptLog"></p>
+    <div id="backupOutputArea" class="outputArea"></div>
+    <div id="backupScriptLogArea" class="scriptLogArea">
+        <p id="backupScriptLog"></p>
     </div>
 </div>
 
@@ -64,8 +65,8 @@
 <div class="wrapper" id="update">
     <h1 class="title">Updating your ghost blog</h1>
     <div id="outputArea"></div>
-    <div id="scriptLogArea">
-        <p id="scriptLog"></p>
+    <div id="updateScriptLogArea" class="outputArea">
+        <p id="updateScriptLog" class="scriptLogArea"></p>
     </div>
 </div>
 

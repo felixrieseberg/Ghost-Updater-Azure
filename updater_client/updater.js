@@ -8,12 +8,12 @@ UpdaterClient.updater = {
         var loader = '',
         errorText = (error) ? '<span class="error">Error: </span>' : '';
 
-        if ($('#update > #loading')) {
-            $('#update > #loading').remove();
+        if ($('#loading')) {
+            $('#loading').remove();
         }
 
         loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
-        return $('#update > #outputArea').append('<p>' + errorText + text + loader + '</p>');
+        return $('#outputArea').append('<p>' + errorText + text + loader + '</p>');
     },
 
     appendError: function (text) {
@@ -74,7 +74,7 @@ UpdaterClient.updater = {
                 }
                 self.appendError(error);
             } else if (response.statusCode === 201) {
-                self.appendLog('Ghost package successfully uploaded.');
+                self.appendLog('Ghost package successfully uploaded');
                 if (propagate) {
                     self.deployScript(propagate);
                 }
@@ -128,8 +128,8 @@ UpdaterClient.updater = {
             scriptRunning = true;
 
             if (response) {                
-                scriptLogArea = scriptLogArea || $('#update > #scriptLogArea');
-                scriptLog = scriptLog || $('#update > #scriptLog');
+                scriptLogArea = scriptLogArea || $('#updateScriptLogArea');
+                scriptLog = scriptLog || $('#updateScriptLog');
 
                 scriptLog.text(response);
                 scriptLogArea.show();

@@ -32,7 +32,6 @@ router.get('/config', function (req, res) {
 
 router.get('/upload', function (req, res) {
     debug('Uploading Ghost to Azure Website');
-    simpleUID = filesfolders.simpleUID();
 
     // Check if file already exists - if so, nuke the folder.
     filesfolders.list('site/temp')
@@ -42,10 +41,10 @@ router.get('/upload', function (req, res) {
 
         debug('Get List Response: ', response);
 
-        filteredResponse = _.findWhere(response, {path: "D:\\home\\site\\temp\\ghost.zip"});
+        filteredResponse = _.findWhere(response, {path: 'D:\\home\\site\\temp\\ghost.zip'});
         debug('Filtered response: ', filteredResponse);
         if (filteredResponse) {
-            debug('Ghost.zip already exists, deleting /temp folder.')
+            debug('Ghost.zip already exists, deleting /temp folder.');
             return filesfolders.rmDir('site/temp');
         }
         return;

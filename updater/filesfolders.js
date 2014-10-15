@@ -35,9 +35,6 @@ var filesfolders = {
         return request.putAsync(config.website + '/api/vfs/' + target, {
             'auth': auth,
         }).then(function(response) {
-            if (response.statusCode === '409') {
-                // Directory already exists
-            }
             return response;
         }).catch(console.log);
     },
@@ -168,10 +165,6 @@ var filesfolders = {
                 }
             );
         });
-    },
-    
-    simpleUID: function() {
-        return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
     }
 };
 

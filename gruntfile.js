@@ -4,7 +4,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         jshint: {
-            all: [ 'Gruntfile.js', 'public/scripts/*.js', 'app.js', 'updater/**/*.js'],
+            all: [ 'Gruntfile.js', 'updater_client/**/*.js', 'app.js', 'updater/**/*.js'],
             options: {
                 jshintrc: true
             }
@@ -51,7 +51,6 @@ module.exports = function(grunt) {
                     name: 'Ghost Updater for Azure',
                     platforms: ['win'],
                     buildDir: './builds',
-                    name: 'Ghost Updater for Azure',
                     winIco: './public/images/icon.ico'
                 },
                 src: ['public/**/*', 'node_modules/**/*', '!node_modules/grunt**/**', 'updater/**/*', 'updater_client/**/*', 'views/**/*', '*.js', '*.html', '*.json'] // Your node-webkit app
@@ -61,7 +60,6 @@ module.exports = function(grunt) {
                     name: 'Ghost Updater for Azure',
                     platforms: ['osx', 'linux32'],
                     buildDir: './builds',
-                    name: 'Ghost Updater for Azure',
                     macIcns: './public/images/icon.icns',
                     winIco: './public/images/icon.ico'
                 },

@@ -3,6 +3,7 @@
 
 cd "D:\home\site\"
 If (Test-Path ./wwwroot-backup/){
+    "Removing old backup"
     Remove-Item -Path ./wwwroot-backup -Recurse
 }
 

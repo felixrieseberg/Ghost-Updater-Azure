@@ -1,70 +1,71 @@
 var UpdaterClient = UpdaterClient || {}; 
 
+var bScriptLog, bScriptLogArea;
+
 UpdaterClient.backup = {
+
+    scriptsDeployed: false,
 
     appendLog: function (text, loading, error) {
         var loader = '',
         errorText = (error) ? '<span class="error">Error: </span>' : '';
 
-        if ($('#backup > #loading')) {
-            $('#backup > #loading').remove();
+        if ($('#loading')) {
+            $('#loading').remove();
         }
 
         loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
-        return $('#backup > #outputArea').append('<p>' + errorText + text + loader + '</p>');
+        return $('#backupOutputArea').append('<p>' + errorText + text + loader + '</p>');
     },
 
     appendError: function (text) {
         return this.appendLog(text, false, true);
     },
 
-    deployScripts: function (propagate) {
+    deployScripts: function (callback) {
         var self = this;
-        this.appendLog('Deploying backup scripts to Azure Website');
+        this.appendLog('Deploying backup scripts to Azure Website', true);
 
-        $.ajax('/backup/deploy').done(function(response) {
-            if (response.statusCode >= 200 && response.statusCode <= 400) {
-                console.log(respose);
+        $.ajax('/backup/deploy').done(function () {
+            self.appendLog('Scripts successfully deployed');
+            self.scriptsDeployed = true;
 
-                if (responseBody.url) {
-                    self.appendLog('Scripts successfully deployed.');
-                    if (propagate) {
-                        self.triggerScript(propagate);
-                    }
-                }
+            if (callback) {
+                callback.call(self);
             }
         });
     },
 
-    makeBackup: function (propagate) {
+    makeBackup: function () {
         var self = this;
-        this.appendLog('Instructing Azure to create backup', true);
+        this.appendLog('Instructing Azure to create backup (this might take a while)', true);
         
-        $.post('/backup/create').done(function(response) {
-            if (response.statusCode >= 200 && response.statusCode <= 400) {
-                getScriptStatus('create');
+        $.post('/backup/create').done(function (response) {
+            if (response) {
+                console.log('Triggered create, getting status');
+                self.getScriptStatus('create');
             }
         });
     },
 
-    deleteBackup: function (propagate) {
+    deleteBackup: function () {
         var self = this;
         this.appendLog('Instructing Azure to delete backup', true);
         
-        $.post('/backup/delete').done(function(response) {
-            if (response.statusCode >= 200 && response.statusCode <= 400) {
-                getScriptStatus('delete');
+        $.post('/backup/delete').done(function (response) {
+            if (response) {
+                self.getScriptStatus('delete');
             }
         });
     },
 
-    restoreBackup: function (propagate) {
+    restoreBackup: function () {
         var self = this;
-        this.appendLog('Instructing Azure to restore backup', true);
+        this.appendLog('Instructing Azure to restore backup (this might take a while)', true);
         
-        $.post('/backup/restore').done(function(response) {
-            if (response.statusCode >= 200 && response.statusCode <= 400) {
-                getScriptStatus('restore');
+        $.post('/backup/restore').done(function (response) {
+            if (response) {
+                self.getScriptStatus('restore');
             }
         });
     },
@@ -75,26 +76,36 @@ UpdaterClient.backup = {
         $.ajax({
             url: '/backup/' + script,
             dataType: 'text'
-        }).done(function(response) {
-            scriptRunning = true;
-
+        }).done(function (response) {
             if (response) {                
-                scriptLogArea = scriptLogArea || $('#backup > #scriptLogArea');
-                scriptLog = scriptLog || $('#backup > #scriptLog');
+                bScriptLogArea = bScriptLogArea || $('#backupbScriptLogArea');
+                bScriptLog = bScriptLog || $('#backupScriptLog');
 
-                scriptLog.text(response);
-                scriptLogArea.show();
-                scriptLogArea.scrollTop(scriptLogArea.scrollHeight);
+                bScriptLog.text(response);
+                bScriptLogArea.show();
+                bScriptLogArea.scrollTop(bScriptLogArea.scrollHeight);
 
                 if (response.indexOf('Status changed to Success') > -1) {
                     // We're done!
-                    scriptLogArea.hide();
-                    scriptLogArea.empty();
-                    self.appendLog('All done!', false);
+                    self.appendLog('All done, initiating update!', false);
+
+                    bScriptLogArea.hide().delay(500).queue(function() {
+                         bScriptLogArea.empty();
+                         UpdaterClient.updater.startInstallation();
+                    });
+
                 } else {
-                    self.getScriptStatus();
+                    bScriptLog.delay(300).queue(function() {
+                        self.getScriptStatus(script);
+                    });
                 }
             }
         });
+    },
+
+    startBackup: function() {
+        UpdaterClient.config.backup = true;
+        UpdaterClient.utils.switchPanel('#backup');
+        UpdaterClient.backup.deployScripts(UpdaterClient.backup.makeBackup);
     }
 };
