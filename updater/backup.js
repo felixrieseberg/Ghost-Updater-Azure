@@ -12,9 +12,9 @@ var createScriptRunning, createScriptLog,
 router.get('/deploy', function (req, res) {
     debug('Deploying Backup Scripts');
 
-    var create = filesfolders.uploadWebjob('./bin/createBackup.ps1', 'createBackup.ps1'),
-        remove = filesfolders.uploadWebjob('./bin/removeBackup.ps1', 'removeBackup.ps1'),
-        restore = filesfolders.uploadWebjob('./bin/restoreBackup.ps1', 'restoreBackup.ps1');
+    var create = filesfolders.uploadWebjob('./public/powershell/createBackup.ps1', 'createBackup.ps1'),
+        remove = filesfolders.uploadWebjob('./public/powershell/removeBackup.ps1', 'removeBackup.ps1'),
+        restore = filesfolders.uploadWebjob('./public/powershell/restoreBackup.ps1', 'restoreBackup.ps1');
 
     return Promise.all([create, remove, restore])
     .then(function (results) {
@@ -46,7 +46,7 @@ router.post('/restore', function (req, res) {
 router.post('/delete', function (req, res) {
     debug('Triggering Delete Backup Webjob');
 
-    return filesfolders.triggerWebjob('deleteBackup.ps1')
+    return filesfolders.triggerWebjob('removeBackup.ps1')
     .then(function (result) {
         debug('Trigger successful, result: ' + result);
         return res.json(result);

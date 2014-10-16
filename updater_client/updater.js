@@ -102,7 +102,7 @@ UpdaterClient.updater = {
                 self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
                 self.scriptLogTitle.show();            
                 self.scriptLog = self.scriptLog || $('#updateScriptLog');
-                self.scriptLog.innerText = response;
+                self.scriptLog.text(response);
                 self.scriptLog.show();
                 self.scriptLogArea = self.scriptLogArea || $('#updateScriptLogArea');
                 self.scriptLogArea.show();

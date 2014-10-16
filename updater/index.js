@@ -62,7 +62,7 @@ router.get('/upload', function (req, res) {
 router.get('/deploy', function (req, res) {
     debug('Deploying Updater Webjob');
 
-    return filesfolders.uploadWebjob('./bin/updater.ps1', 'updater.ps1')
+    return filesfolders.uploadWebjob('./public/powershell/updater.ps1', 'updater.ps1')
     .then(function (result) {
         debug('Upload done, result: ' + result);
         res.json(result);

@@ -31,11 +31,10 @@
 <div class="wrapper" id="backupdisclaimer">
     <h1 class="title">Save your stuff</h1>
     <p>It's unlikely that things go wrong, but it's better to be safe than sorry. We can create a full backup (including all files). Once the update is done, you can either restore or delete it. This is heavily recommended.</p>
-    <p>Alternatively, go to <a id="backuplink">your site's debug page</a> and press the export button to download a file containing your blog's settings and posts. This tool can't restore from this file.</p>
     <p><strong>In either case, please stop changing your blog's content now.</strong></p>
     <div id="confirmArea">
         <button data-action="UpdaterClient.utils.switchPanel" data-target="#config" id="btn-back-s2">Back</button>
-        <button data-actin="UpdaterClient.updater.startInstallation" class="warning">Update without Backup</button>
+        <button data-action="UpdaterClient.updater.startInstallation" class="warning">Update without Backup</button>
         <button data-action="UpdaterClient.backup.startBackup">Update with Backup</button>
     </div>
 </div>

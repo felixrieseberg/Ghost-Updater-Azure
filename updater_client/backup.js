@@ -87,7 +87,7 @@ UpdaterClient.backup = {
                 self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
                 self.scriptLogTitle.show();
                 self.bScriptLog = self.bScriptLog || $('#backupScriptLog');
-                self.bScriptLog.innerText = response;
+                self.bScriptLog.text(response);
                 self.bScriptLogArea = self.bScriptLogArea || $('#backupScriptLogArea');
                 self.bScriptLogArea.show();
                 self.bScriptLogArea.scrollTop(self.bScriptLogArea.scrollHeight);
