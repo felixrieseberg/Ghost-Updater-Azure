@@ -1,5 +1,5 @@
 ## Ghost Updater for Microsoft Azure
-Microsoft Azure allows a one-click installation of the popular blogging platform Ghost, but there's currently no integrated update option. This tool automatically upgrades Ghost running on Azure Websites in a few clicks. It is being maintained by the Microsoft DX team with :heart: for Ghost!
+Microsoft Azure allows a one-click installation of the popular blogging platform Ghost, but there's currently no integrated update option. This tool automatically upgrades Ghost running on Azure Websites in a few clicks. It is being maintained by members of the Microsoft DX team with :heart: for Ghost!
 
 ![](https://raw.githubusercontent.com/felixrieseberg/Ghost-Updater-Azure/master/docs/screens.png)
 
