@@ -1,4 +1,4 @@
-/*! Ghost-Updater-Azure - v0.5.0 - 2014-10-21 */var UpdaterClient = UpdaterClient || {};
+/*! Ghost-Updater-Azure - v0.6.0 - 2014-10-21 */var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.init = function () {
     UpdaterClient.config.getConfig();
@@ -91,11 +91,11 @@ UpdaterClient.backup = {
     },
 
     deleteBackup: function () {
-        var self = this;
+        var self = UpdaterClient.backup;
 
         $('#backup > .title').text('Deleting Backup');
         UpdaterClient.utils.switchPanel('#backup');
-        this.appendLog('Instructing Azure to delete backup', true);
+        self.appendLog('Instructing Azure to delete backup', true);
         
         $.post('/backup/delete').done(function (response) {
             if (response) {
@@ -204,7 +204,7 @@ UpdaterClient.backup = {
         });
     },
 
-    startBackup: function() {
+    startBackup: function () {
         UpdaterClient.config.backup = true;
         UpdaterClient.utils.switchPanel('#backup');
         UpdaterClient.backup.deployScripts(UpdaterClient.backup.makeBackup);

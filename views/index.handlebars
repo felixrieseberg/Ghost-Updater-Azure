@@ -32,10 +32,10 @@
     <h1 class="title">Save your stuff</h1>
     <p>It's unlikely that things go wrong, but it's better to be safe than sorry. We can create a full backup (including all files). Once the update is done, you can either restore or delete it. This is heavily recommended.</p>
     <p><strong>In either case, please stop changing your blog's content now.</strong></p>
-    <div id="confirmArea">
-        <button data-action="UpdaterClient.utils.switchPanel" data-target="#config" id="btn-back-s2">Back</button>
         <button data-action="UpdaterClient.updater.startInstallation" class="warning">Update without Backup</button>
         <button data-action="UpdaterClient.backup.startBackup">Update with Backup</button>
+    <div id="confirmArea">
+        <button data-action="UpdaterClient.utils.switchPanel" data-target="#config" id="btn-back-s2">Back</button>
     </div>
 </div>
 
@@ -91,6 +91,7 @@
 <div class="wrapper" id="updatefinished">
     <h1 class="title">All done!</h1>
     <p>We're all done. Please visit your blog and ensure that everything is working well (if the blog loads, you're good). If the blog doesn't load after a few tries or displays an error, you can go back to your backup.</p>
+    <p>You can also just close the tool and keep the backup (it's in a folder called <i>wwwroot-backup</i> on your site).</p>
     <div id="confirmArea">
         <button data-action="UpdaterClient.backup.deleteBackup">Delete Backup</button>
         <button data-action="UpdaterClient.backup.restoreBackup">Restore Backup</button>

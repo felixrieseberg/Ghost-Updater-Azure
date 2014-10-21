@@ -181,6 +181,10 @@ button:hover {
     background-color: #cf2121;
 }
 
+#existingBackup {
+    padding-top: 200px;
+}
+
 .scriptLogArea {
     font-size: 11px;
 

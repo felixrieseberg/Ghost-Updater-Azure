@@ -132,7 +132,7 @@ router.get('/delete', function (req, res) {
     var responseBody;
 
     if (!deleteScriptRunning && !deleteScriptLog) {
-        return filesfolders.getWebjobInfo('deleteBackup.ps1')
+        return filesfolders.getWebjobInfo('removeBackup.ps1')
         .then(function (result) {
             debug(result);
             
