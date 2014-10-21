@@ -125,6 +125,9 @@ UpdaterClient.updater = {
                     self.scriptLogArea.hide();
                     self.scriptLogTitle.hide();
                     self.scriptLog.empty();
+                    UpdaterClient.utils.timerButton('grey');
+                    clearTimeout(self.timerYellow);
+                    clearTimeout(self.timerRed);
                     self.appendLog('All done, your blog has been updated!', false);
                     self.updateFinished = true;
 

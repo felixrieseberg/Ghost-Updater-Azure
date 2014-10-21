@@ -123,11 +123,14 @@ UpdaterClient.backup = {
                     self.backupFinished = true;
 
                     setTimeout(function() {
-                         UpdaterClient.updater.startInstallation();
-                         self.scriptLogTitle.hide();
-                         self.bScriptLogArea.hide();
-                         self.bScriptLog.empty();
-                         $('#backupOutputArea').empty();
+                        UpdaterClient.updater.startInstallation();
+                        self.bScriptLogArea.hide();
+                        self.scriptLogTitle.hide();
+                        self.bScriptLog.empty();
+                        clearTimeout(self.timerYellow);
+                        clearTimeout(self.timerRed);
+                        UpdaterClient.utils.timerButton('grey');
+                        $('#backupOutputArea').empty();
                     }, 300);
                 } 
 
