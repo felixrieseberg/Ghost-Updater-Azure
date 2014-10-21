@@ -4,14 +4,13 @@ Microsoft Azure allows a one-click installation of the popular blogging platform
 ![](https://raw.githubusercontent.com/felixrieseberg/Ghost-Updater-Azure/master/docs/screens.png)
 
 ### Download
-- [Windows](https://github.com/felixrieseberg/Ghost-Updater-Azure/releases/download/v0.5.1/GhostUpdate-0.5.1-windows.zip)
-- [Mac OS X](https://github.com/felixrieseberg/Ghost-Updater-Azure/releases/download/v0.5.1/GhostUpdater-0.5.1-osx.dmg)
-- [Linux](https://github.com/felixrieseberg/Ghost-Updater-Azure/releases/download/v0.5.1/GhostUpdater-0.5.1-linux.zip)
+- [Windows](https://github.com/felixrieseberg/Ghost-Updater-Azure/releases/download/v0.6.1/GhostUpdater-0.6.1-win.zip) - [Mac OS X](https://github.com/felixrieseberg/Ghost-Updater-Azure/releases/download/v0.6.1/GhostUpdater-0.6.1-osx.dmg) - [Linux](https://github.com/felixrieseberg/Ghost-Updater-Azure/releases/download/v0.6.1/GhostUpdater-0.6.1-linux.zip)
 
-### Usage Instructions
-You'll only need your blog's address and deployment credentials. 
-- Enter blog's address in the format `yoursite.azurewebsites.net`(even if you have a custom domain for your website, do use the azurewebsites.net one).
-- Enter your deployment credentials. They are not the username/password pair used to log into the Azure Management Portal. You can, however, set them comfortably in the Azure Management Portal. Please open your website's dashboard and click on 'Reset Deployment Credentials' in the 'Quick Links' area if you don't know or remember your credentials.
+### How To Update your Ghost Blog
+Good news: It's really simple. You only need two things: The [latest version of Ghost as a zip package](https://ghost.org/download) and your deployment credentials for your website. Those credentials are _not_ the user/password pair used to log into the Azure Management Portal, so let's quickly talk about how to get them:
+
+- Go to your website's dashboard in the Azure Management Portal. 
+- Under *Quick Links* on the right, you'll see *Reset Deployment Credentials*. If you're using the new portal, you'll find a *Set Deployment Credentials* button in the dashboard right in the *Deployment* section.
 
 ![](https://raw.githubusercontent.com/felixrieseberg/Ghost-Updater-Azure/master/docs/password-screen2.png)
 
