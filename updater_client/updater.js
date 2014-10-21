@@ -7,6 +7,9 @@ UpdaterClient.updater = {
     scriptLogTitle: null,
     scriptLogArea: null,
     scriptLog: null,
+    timerCircle: null,
+    timerYellow: null,
+    timerRed: null,
 
     appendLog: function (text, loading, error) {
         return UpdaterClient.utils.appendLog(text, loading, error, '#updateOutputArea');
@@ -26,7 +29,7 @@ UpdaterClient.updater = {
         $.ajax('/updater/upload').done(function(response) {
             console.log('Upload response: ', response);
 
-            if (response.err || response.statusCode >= 400) {
+            if (response.error || response.statusCode >= 400) {
                 console.log('Error: ', response);
 
                 if (response.statusCode === 401) {
@@ -35,11 +38,11 @@ UpdaterClient.updater = {
                 } else if (response.statusCode === 412) {
                     error = 'The filesystem at ' + UpdaterClient.config.url + ' does not accept the upload of the Ghost package.';
                     error +=  nochanges;
-                } else if (response.err.code === 'ENOTFOUND') {
+                } else if (response.error.code === 'ENOTFOUND' || (response.error.message && response.error.message.indexOf('ENOTFOUND') > -1)) {
                     error = 'Website ' + UpdaterClient.config.url + ' could not be found. Please ensure that you are connected to the Internet ';
                     error += 'and that the address is correct and restart the updater.' + nochanges;
                 } else {
-                    error = response.err + nochanges;
+                    error = response.error + nochanges;
                 }
                 self.appendError(error);
             } else if (response.statusCode === 201) {
@@ -95,11 +98,20 @@ UpdaterClient.updater = {
             url: '/updater/info',
             dataType: 'text'
         }).done(function (response) {
-            var now = new Date().toLocaleTimeString();
 
             if (response && !self.updateFinished) {   
+                clearTimeout(self.timerYellow);
+                clearTimeout(self.timerRed);
+
+                self.timerYellow = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('yellow');
+                }, 120000);
+                self.timerRed = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('red');
+                }, 300000);
+                UpdaterClient.utils.timerButton('green');
+
                 self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
-                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
                 self.scriptLogTitle.show();            
                 self.scriptLog = self.scriptLog || $('#updateScriptLog');
                 self.scriptLog.text(response);
@@ -111,6 +123,8 @@ UpdaterClient.updater = {
                 if (response.indexOf('Status changed to Success') > -1) {
                     // We're done!
                     self.scriptLogArea.hide();
+                    self.scriptLogTitle.hide();
+                    self.scriptLog.empty();
                     self.appendLog('All done, your blog has been updated!', false);
                     self.updateFinished = true;
 

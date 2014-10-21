@@ -18,7 +18,7 @@
             <p><strong>Do not</strong> use the username/password you use to log into Azure. <a data-action="UpdaterClient.utils.switchPanel" data-target="#help" href="#">Where do I find my deployment credentials?</a></p>
         </div>
         <div class="row" id="ghost-zip-container">
-            <label for="ghost-zip">Ghost Package</label>
+            <label for="ghost-zip"><img src="/images/loading.gif" class="ghostPackageLoader">Ghost Package</label>
             <input id="ghost-zip" accept=".zip" type="file" required>
         </div>
     </div>
@@ -55,7 +55,15 @@
 <div class="wrapper" id="backup">
     <h1 class="title">Backing up your ghost blog</h1>
     <div id="backupOutputArea" class="outputArea"></div>
-    <h4 class="scriptLogTitle">Live Script Output</h4>
+    <div class="scriptLogTitle">
+        <h4 class="logleft">Live Script Output</h4>
+        <div class="logright">
+            <h4>Connection Status:</h4>
+            <a href="#" class="circle">
+                <span id="connectionStatus">The connection status to your Azure Website is currently unknown.</span>
+            </a>
+        </div>
+    </div>
     <div id="backupScriptLogArea" class="scriptLogArea">
         <p id="backupScriptLog"></p>
     </div>
@@ -65,7 +73,15 @@
 <div class="wrapper" id="update">
     <h1 class="title">Updating your ghost blog</h1>
     <div id="updateOutputArea"></div>
-    <h4 class="scriptLogTitle">Live Script Output</h4>
+    <div class="scriptLogTitle">
+        <h4 class="logleft">Live Script Output</h4>
+        <div class="logright">
+            <h4>Connection Status:</h4>
+            <a href="#" class="circle">
+                <span id="connectionStatus">The connection status to your Azure Website is currently unknown.</span>
+            </a>
+        </div>
+    </div>
     <div id="updateScriptLogArea" class="outputArea">
         <p id="updateScriptLog" class="scriptLogArea"></p>
     </div>

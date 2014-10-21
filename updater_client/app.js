@@ -5,7 +5,13 @@ UpdaterClient.init = function () {
 
     // Wire up buttons to actions
     $('input').bind('input', UpdaterClient.validation.validateConfig);
-    $('#ghost-zip').change(UpdaterClient.updater.setGhostPackage);
+    $('#ghost-zip').click(function () {
+        $('.ghostPackageLoader').show();
+    });
+    $('#ghost-zip').change(function () {
+        $(this).attr('disabled', false);
+        $('.ghostPackageLoader').hide();
+    });
 
     // Defining actions and handlers here is okay, but feels dirty.
     // This allows us to define actions with the data-action attribute.

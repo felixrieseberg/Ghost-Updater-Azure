@@ -1,5 +1,5 @@
 var express         = require('express'),
-    debug           = require('debug')('Updater'),
+    debug           = require('debug')('gu-updater'),
     _               = require('underscore'),
     router          = express.Router(),
 
@@ -33,7 +33,6 @@ router.get('/config', function (req, res) {
 router.get('/upload', function (req, res) {
     debug('Uploading Ghost to Azure Website');
 
-    // Check if file already exists - if so, nuke the folder.
     filesfolders.list('site/temp')
     .then(function (result) {
         var filteredResponse,
@@ -54,8 +53,11 @@ router.get('/upload', function (req, res) {
             debug('Upload done, result: ' + result);
             res.json(result);
         }).catch(function(error) {
-            res.json({ err: error });
+            res.json({error: error});
         });
+    }).catch(function (error) {
+        debug(error);
+        res.json({error: error});
     });
 });
 

@@ -19,15 +19,29 @@ UpdaterClient.backup = {
     },
 
     deployScripts: function (callback) {
-        var self = this;
+        var self = this,
+            nochanges = ' No changes to your site have been made.',
+            error;
+
         this.appendLog('Deploying backup scripts to Azure Website', true);
 
-        $.ajax('/backup/deploy').done(function () {
+        $.ajax('/backup/deploy').done(function (response) {
+            if (response && response.error) {
+                if (response.error.message && response.error.message.indexOf('ENOTFOUND') > -1) {
+                    error = 'Website ' + UpdaterClient.config.url + ' could not be found. Please ensure that you are connected to the Internet ';
+                    error += 'and that the address is correct and restart the updater.' + nochanges;
+                    return self.appendError(error);
+                } else {
+                    return self.appendError(response.error);
+
+                }
+            }
+
             self.appendLog('Scripts successfully deployed');
             self.scriptsDeployed = true;
 
             if (callback) {
-                callback.call(self);
+                return callback.call(self);
             }
         });
     },
@@ -79,12 +93,21 @@ UpdaterClient.backup = {
             url: '/backup/' + script,
             dataType: 'text'
         }).done(function (response) {
-            var repeat = false,
-                now = new Date().toLocaleTimeString();
+            var repeat = false;
 
             if (response) {
+                clearTimeout(self.timerYellow);
+                clearTimeout(self.timerRed);
+
+                self.timerYellow = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('yellow');
+                }, 120000);
+                self.timerRed = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('red');
+                }, 300000);
+                UpdaterClient.utils.timerButton('green');
+
                 self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
-                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
                 self.scriptLogTitle.show();
                 self.bScriptLog = self.bScriptLog || $('#backupScriptLog');
                 self.bScriptLog.text(response);
@@ -101,6 +124,8 @@ UpdaterClient.backup = {
 
                     setTimeout(function() {
                          UpdaterClient.updater.startInstallation();
+                         self.scriptLogTitle.hide();
+                         self.bScriptLogArea.hide();
                          self.bScriptLog.empty();
                          $('#backupOutputArea').empty();
                     }, 300);

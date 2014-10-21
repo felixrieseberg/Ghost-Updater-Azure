@@ -1,5 +1,5 @@
 var express         = require('express'),
-    debug           = require('debug')('Backup'),
+    debug           = require('debug')('gu-backup'),
     router          = express.Router(),
     Promise         = require('bluebird'),
 
@@ -20,6 +20,9 @@ router.get('/deploy', function (req, res) {
     .then(function (results) {
         debug('Upload done, result: ' + results);
         return res.json({ status: 'Scripts deployed' });
+    }).catch(function (error) {
+        debug('Scripts deployment error: ', error);
+        return res.json({ error: error });
     });
 });
 

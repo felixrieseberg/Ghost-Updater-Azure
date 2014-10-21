@@ -1,11 +1,17 @@
-/*! Ghost-Updater-Azure - v0.5.0 - 2014-10-15 */var UpdaterClient = UpdaterClient || {};
+/*! Ghost-Updater-Azure - v0.5.0 - 2014-10-21 */var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.init = function () {
     UpdaterClient.config.getConfig();
 
     // Wire up buttons to actions
     $('input').bind('input', UpdaterClient.validation.validateConfig);
-    $('#ghost-zip').change(UpdaterClient.updater.setGhostPackage);
+    $('#ghost-zip').click(function () {
+        $('.ghostPackageLoader').show();
+    });
+    $('#ghost-zip').change(function () {
+        $(this).attr('disabled', false);
+        $('.ghostPackageLoader').hide();
+    });
 
     // Defining actions and handlers here is okay, but feels dirty.
     // This allows us to define actions with the data-action attribute.
@@ -45,15 +51,29 @@ UpdaterClient.backup = {
     },
 
     deployScripts: function (callback) {
-        var self = this;
+        var self = this,
+            nochanges = ' No changes to your site have been made.',
+            error;
+
         this.appendLog('Deploying backup scripts to Azure Website', true);
 
-        $.ajax('/backup/deploy').done(function () {
+        $.ajax('/backup/deploy').done(function (response) {
+            if (response && response.error) {
+                if (response.error.message && response.error.message.indexOf('ENOTFOUND') > -1) {
+                    error = 'Website ' + UpdaterClient.config.url + ' could not be found. Please ensure that you are connected to the Internet ';
+                    error += 'and that the address is correct and restart the updater.' + nochanges;
+                    return self.appendError(error);
+                } else {
+                    return self.appendError(response.error);
+
+                }
+            }
+
             self.appendLog('Scripts successfully deployed');
             self.scriptsDeployed = true;
 
             if (callback) {
-                callback.call(self);
+                return callback.call(self);
             }
         });
     },
@@ -105,12 +125,21 @@ UpdaterClient.backup = {
             url: '/backup/' + script,
             dataType: 'text'
         }).done(function (response) {
-            var repeat = false,
-                now = new Date().toLocaleTimeString();
+            var repeat = false;
 
             if (response) {
+                clearTimeout(self.timerYellow);
+                clearTimeout(self.timerRed);
+
+                self.timerYellow = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('yellow');
+                }, 120000);
+                self.timerRed = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('red');
+                }, 300000);
+                UpdaterClient.utils.timerButton('green');
+
                 self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
-                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
                 self.scriptLogTitle.show();
                 self.bScriptLog = self.bScriptLog || $('#backupScriptLog');
                 self.bScriptLog.text(response);
@@ -127,6 +156,8 @@ UpdaterClient.backup = {
 
                     setTimeout(function() {
                          UpdaterClient.updater.startInstallation();
+                         self.scriptLogTitle.hide();
+                         self.bScriptLogArea.hide();
                          self.bScriptLog.empty();
                          $('#backupOutputArea').empty();
                     }, 300);
@@ -226,6 +257,9 @@ UpdaterClient.updater = {
     scriptLogTitle: null,
     scriptLogArea: null,
     scriptLog: null,
+    timerCircle: null,
+    timerYellow: null,
+    timerRed: null,
 
     appendLog: function (text, loading, error) {
         return UpdaterClient.utils.appendLog(text, loading, error, '#updateOutputArea');
@@ -245,7 +279,7 @@ UpdaterClient.updater = {
         $.ajax('/updater/upload').done(function(response) {
             console.log('Upload response: ', response);
 
-            if (response.err || response.statusCode >= 400) {
+            if (response.error || response.statusCode >= 400) {
                 console.log('Error: ', response);
 
                 if (response.statusCode === 401) {
@@ -254,11 +288,11 @@ UpdaterClient.updater = {
                 } else if (response.statusCode === 412) {
                     error = 'The filesystem at ' + UpdaterClient.config.url + ' does not accept the upload of the Ghost package.';
                     error +=  nochanges;
-                } else if (response.err.code === 'ENOTFOUND') {
+                } else if (response.error.code === 'ENOTFOUND' || (response.error.message && response.error.message.indexOf('ENOTFOUND') > -1)) {
                     error = 'Website ' + UpdaterClient.config.url + ' could not be found. Please ensure that you are connected to the Internet ';
                     error += 'and that the address is correct and restart the updater.' + nochanges;
                 } else {
-                    error = response.err + nochanges;
+                    error = response.error + nochanges;
                 }
                 self.appendError(error);
             } else if (response.statusCode === 201) {
@@ -314,11 +348,20 @@ UpdaterClient.updater = {
             url: '/updater/info',
             dataType: 'text'
         }).done(function (response) {
-            var now = new Date().toLocaleTimeString();
 
             if (response && !self.updateFinished) {   
+                clearTimeout(self.timerYellow);
+                clearTimeout(self.timerRed);
+
+                self.timerYellow = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('yellow');
+                }, 120000);
+                self.timerRed = setTimeout(function () {
+                    UpdaterClient.utils.timerButton('red');
+                }, 300000);
+                UpdaterClient.utils.timerButton('green');
+
                 self.scriptLogTitle = self.scriptLogTitle || $('.scriptLogTitle');
-                self.scriptLogTitle.text('Live Script Output (Last Update: ' + now + ')');
                 self.scriptLogTitle.show();            
                 self.scriptLog = self.scriptLog || $('#updateScriptLog');
                 self.scriptLog.text(response);
@@ -330,6 +373,8 @@ UpdaterClient.updater = {
                 if (response.indexOf('Status changed to Success') > -1) {
                     // We're done!
                     self.scriptLogArea.hide();
+                    self.scriptLogTitle.hide();
+                    self.scriptLog.empty();
                     self.appendLog('All done, your blog has been updated!', false);
                     self.updateFinished = true;
 
@@ -372,6 +417,37 @@ UpdaterClient.utils = {
 
         loader = (loading) ? ' <img id="loading" src="/images/loading.gif" />' : '';
         return $(target).append('<p>' + errorText + text + loader + '</p>');
+    },
+
+    timerButton: function (color) {
+        var timerCircle = $('.circle'),
+            timerTooltip = $('.circle > span'),
+            textKeepTrying = '\nThis tool will keep trying to reach the website.',
+            textRed = 'We have not heard back from the websites within the last five minutes, which can indicate a problem.' + textKeepTrying,
+            textYellow = 'We have not heard back from the website within the last two minutes.' + textKeepTrying,
+            textGrey = 'The connection status to your Azure Website is currently unknown.',
+            textGreen = 'We are connected to your Azure Website.';
+
+        switch (color) {
+            case 'red':
+                timerCircle.css('background-color', '#e55b5b');
+                timerTooltip.text(textRed);
+                break;
+            case 'yellow':
+                timerCircle.css('background-color', '#ffe811');
+                timerTooltip.text(textYellow);
+                break;
+            case 'grey':
+                timerCircle.css('background-color', '#7f7f7f');
+                timerTooltip.text(textGrey);
+                break;
+            case 'green':
+                timerCircle.css('background-color', '#799a2e');
+                timerTooltip.text(textGreen);
+                break;
+            default:
+                break;
+        }
     }
 
 };var UpdaterClient = UpdaterClient || {};
