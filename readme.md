@@ -14,5 +14,8 @@ Good news: It's really simple. You only need two things: The [latest version of 
 
 ![](https://raw.githubusercontent.com/felixrieseberg/Ghost-Updater-Azure/master/docs/password-screen2.png)
 
+### Support
+We at Microsoft love Ghost, which is why we release this code. It is not a Microsoft product - there is no warranty or support of any kind. Please see License.md if you have any questions.
+
 ### License
 The MIT License (MIT), Copyright (c) 2014 Felix Rieseberg. Please see License.md for details.
