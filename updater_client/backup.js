@@ -33,7 +33,6 @@ UpdaterClient.backup = {
                     return self.appendError(error);
                 } else {
                     return self.appendError(response.error);
-
                 }
             }
 

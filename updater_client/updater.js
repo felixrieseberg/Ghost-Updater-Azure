@@ -27,7 +27,6 @@ UpdaterClient.updater = {
         this.appendLog('Uploading Ghost package to Azure Website (this might take a while)', true);
 
         $.ajax('/updater/upload').done(function(response) {
-            console.log('Upload response: ', response);
 
             if (response.error || response.statusCode >= 400) {
                 console.log('Error: ', response);

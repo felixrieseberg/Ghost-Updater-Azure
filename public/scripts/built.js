@@ -1,4 +1,4 @@
-/*! Ghost-Updater-Azure - v0.6.0 - 2014-10-21 */var UpdaterClient = UpdaterClient || {};
+/*! Ghost-Updater-Azure - v0.6.1 - 2014-10-21 */var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.init = function () {
     UpdaterClient.config.getConfig();
@@ -155,11 +155,14 @@ UpdaterClient.backup = {
                     self.backupFinished = true;
 
                     setTimeout(function() {
-                         UpdaterClient.updater.startInstallation();
-                         self.scriptLogTitle.hide();
-                         self.bScriptLogArea.hide();
-                         self.bScriptLog.empty();
-                         $('#backupOutputArea').empty();
+                        UpdaterClient.updater.startInstallation();
+                        self.bScriptLogArea.hide();
+                        self.scriptLogTitle.hide();
+                        self.bScriptLog.empty();
+                        clearTimeout(self.timerYellow);
+                        clearTimeout(self.timerRed);
+                        UpdaterClient.utils.timerButton('grey');
+                        $('#backupOutputArea').empty();
                     }, 300);
                 } 
 
@@ -375,6 +378,9 @@ UpdaterClient.updater = {
                     self.scriptLogArea.hide();
                     self.scriptLogTitle.hide();
                     self.scriptLog.empty();
+                    UpdaterClient.utils.timerButton('grey');
+                    clearTimeout(self.timerYellow);
+                    clearTimeout(self.timerRed);
                     self.appendLog('All done, your blog has been updated!', false);
                     self.updateFinished = true;
 
