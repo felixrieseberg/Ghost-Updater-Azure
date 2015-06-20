@@ -1,5 +1,5 @@
 ## Ghost Updater for Microsoft Azure
-Microsoft Azure allows a one-click installation of the popular blogging platform Ghost, but there's currently no integrated update option. This tool automatically upgrades Ghost running on Azure Websites in a few clicks. It is being maintained by members of the Microsoft DX team with :heart: for Ghost!
+Microsoft Azure allows a one-click installation of the popular blogging platform Ghost, but there's currently no integrated update option. This desktop app automatically upgrades Ghost running on Azure Web Apps (formerly known as Azure Websites) in a few clicks. It is being maintained by members of the Microsoft DX team with :heart: for Ghost!
 
 ***Latest version known to update without errors: 0.6.4***
 
@@ -17,7 +17,9 @@ Good news: It's really simple. You only need two things: The [latest version of 
 ![](https://raw.githubusercontent.com/felixrieseberg/Ghost-Updater-Azure/master/docs/password-screen2.png)
 
 ### Support
-We at Microsoft love Ghost, which is why we release this code. It is not a Microsoft product - there is no warranty or support of any kind. Please see License.md if you have any questions.
+If you run into any issues, please go and report them in the [issue section of the GitHub repository](https://github.com/felixrieseberg/Ghost-Updater-Azure/issues).
+
+We at Microsoft love Ghost, which is why we release this code. It is not an official Microsoft product - there is no warranty of any kind. Please see License.md if you have any questions.
 
 ### License
-The MIT License (MIT), Copyright (c) 2014 Felix Rieseberg. Please see License.md for details.
+The MIT License (MIT), Copyright (c) 2014 Felix Rieseberg & Microsoft Corporation. Please see License.md for details.
