@@ -7,23 +7,54 @@ var config      = require('../config'),
 Promise.promisifyAll(request);
 Promise.promisifyAll(fs);
 
+/**
+ * The 'filesfolders' module contains helper methods allowing the interaction
+ * with Kudu's VFS API - enabling basic file operations on the website
+ * @type {Object}
+ */
 var filesfolders = {
+    /**
+     * Creates a directory
+     * @param  {string} dir - Name of the directory
+     * @return {promise} - Resolving to the VFS API's response
+     */
     mkDir: function (dir) {
         return this.mk(dir, true);
     },
 
+    /**
+     * Creates a file
+     * @param  {string} dir - Name of the file
+     * @return {promise} - Resolving to the VFS API's response
+     */
     mkFile: function (file) {
         return this.mk(file, false);
     },
 
+    /**
+     * Removes a directory
+     * @param  {string} dir - Name of the directory
+     * @return {promise} - Resolving to the VFS API's response
+     */
     rmDir: function (dir) {
         return this.rm(dir, true);
     },
 
+    /**
+     * Creates a file
+     * @param  {string} dir - Name of the file
+     * @return {promise} - Resolving to the VFS API's response
+     */
     rmFile: function (file) {
         return this.rm(file, false);
     },
 
+    /**
+     * Creates an element
+     * @param  {string}  target - Name of the element
+     * @param  {Boolean} isDir  - Are we creating a directory?
+     * @return {promise} - Resolving to the VFS API's response
+     */
     mk: function (target, isDir) {
         target = (isDir) ? target + '/' : target;
 
@@ -34,6 +65,12 @@ var filesfolders = {
         }).catch(console.log);
     },
 
+    /**
+     * Removes an element
+     * @param  {string}  target - Name of the element
+     * @param  {Boolean} isDir  - Are we removing a directory?
+     * @return {promise} - Resolving to the VFS API's response
+     */
     rm: function (target, isDir) {
         target = (isDir) ? target + '/?recursive=true' : target;
 
@@ -45,6 +82,11 @@ var filesfolders = {
         }).catch(console.log);    
     },
 
+    /**
+     * Lists a directory's content
+     * @param  {string} target - Name of the direcotry
+     * @return {promise} - Resolving to the VFS API's response
+     */
     list: function (target) {
         return new Promise(function (resolve, reject) {
             var targetUrl = config.website + '/api/vfs/' + target + '/',
@@ -66,6 +108,12 @@ var filesfolders = {
         });
     },
 
+    /**
+     * Uploads a file to the Azure Web App
+     * @param  {string} source - Path to local file
+     * @param  {string} target - Path and name of the remote location
+     * @return {promise} - Resolving to the VFS API's response
+     */
     upload: function (source, target) {
         return new Promise(function (resolve, reject) {
             var targetUrl = config.website + '/api/vfs/' + target,
@@ -91,6 +139,12 @@ var filesfolders = {
         });
     },
 
+    /**
+     * Uploads a webjob to the Azure Web App's Kudu service
+     * @param  {string} source - Path to local script
+     * @param  {string} name - Name of the webjob
+     * @return {promise} - Resolving to the VFS API's response
+     */
     uploadWebjob: function (source, name) {
         return new Promise(function (resolve, reject) {
             var targetUrl = config.website + '/api/triggeredwebjobs/' + name,
@@ -130,6 +184,12 @@ var filesfolders = {
         });
     },
 
+    /**
+     * Hit's the Azure Web App's Kudu service's webjob api for the log and
+     * status of a webjob
+     * @param  {string} name - Name of the webjob
+     * @return {promise} - Resolves to the Kudu API response
+     */
     getWebjobInfo: function (name) {
         return new Promise(function (resolve, reject) {
             var targetUrl = config.website + '/api/triggeredwebjobs/' + name,
@@ -156,6 +216,11 @@ var filesfolders = {
         });
     },
 
+    /**
+     * Takes a webjob log URL and returns the content as plain text
+     * @param  {string} targetUrl - Url of the webjob log
+     * @return {promise} - Resolves to the Kudu API response
+     */
     getWebjobLog: function (targetUrl) {
         return new Promise(function (resolve, reject) {
             var errorCheck;
@@ -181,6 +246,11 @@ var filesfolders = {
         });
     }, 
 
+    /**
+     * Trigger's a webjob on the Azure Web App's Kudu service
+     * @param  {string} name - Name of the webjob
+     * @return {promise} - Resolves to the Kudu API response
+     */
     triggerWebjob: function (name) {
         return new Promise(function (resolve, reject) {
             var targetUrl = config.website + '/api/triggeredwebjobs/' + name + '/run',
@@ -209,6 +279,14 @@ var filesfolders = {
         });
     },
 
+    /**
+     * Small helper function used in all methods above, checking the Azure response
+     * for errors. This is required because Azure likes to return an HTML document
+     * describing the error, but it returns said HTML document with status 200 -
+     * the AJAX requests therefore think that everything is fine.
+     * @param  {AJAX response object} response - The response that should be checked
+     * @return {boolean} - If there's no error, we return false
+     */
     checkForError: function (response) {
         // Azure shouldn't return HTML, so something is up
         response = (response[0] && response[0].headers) ? response[0] : response;

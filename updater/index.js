@@ -8,6 +8,13 @@ var express         = require('express'),
 
 var updaterScriptRunning, updaterScriptLog;
 
+/**
+ * Router endpoint enabling configuration.
+ * TODO: This probably shouldn't be a GET?
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response.json} - JSON describing the new set configuration
+ */
 router.get('/config', function (req, res) {
     var website, scmPosition;
 
@@ -30,6 +37,12 @@ router.get('/config', function (req, res) {
     res.json({ website: config.website, username: config.username, password: config.password, zippath: config.zippath });
 });
 
+/**
+ * Router endpoint triggering the file upload of the locally selected Ghost zip file
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response.json} - JSON describing success or failure
+ */
 router.get('/upload', function (req, res) {
     debug('Uploading Ghost to Azure Website');
 
@@ -61,6 +74,13 @@ router.get('/upload', function (req, res) {
     });
 });
 
+/**
+ * Router endpoint triggering the deployment of the 'updater' webjob to the 
+ * Kudu service. This script is the big one actually performing the upgrade.
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response.json} - JSON describing success or failure
+ */
 router.get('/deploy', function (req, res) {
     debug('Deploying Updater Webjob');
 
@@ -71,6 +91,13 @@ router.get('/deploy', function (req, res) {
     });
 });
 
+/**
+ * Router endpoint triggering the 'updater' webjob. Hit this endpoint and
+ * Kudu will attempt upgrading the Ghost installation.
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response.json} - JSON describing success or failure
+ */
 router.get('/trigger', function (req, res) {
     debug('Triggering Updater Webjob');
 
@@ -81,6 +108,13 @@ router.get('/trigger', function (req, res) {
     });
 });
 
+/**
+ * Router endpoint returning the current log and status of the 'updater' webjob,
+ * shoudl said webjob be running
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response text/plain} - Plain text of the log
+ */
 router.get('/info', function (req, res) {
     debug('Getting log info');
 

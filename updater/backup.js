@@ -9,6 +9,13 @@ var createScriptRunning, createScriptLog,
     restoreScriptRunning, restoreScriptLog,
     deleteScriptRunning, deleteScriptLog;
 
+/**
+ * Router endpoint for 'deployment', initiating the deployment of all backup scripts
+ * to Kudu's webjob api.
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response JSON} - JSON describing success or failure of deployment
+ */
 router.get('/deploy', function (req, res) {
     debug('Deploying Backup Scripts');
 
@@ -26,6 +33,13 @@ router.get('/deploy', function (req, res) {
     });
 });
 
+/**
+ * Router endpoint triggering the 'create backup' webjob, which will
+ * instruct Kudu to make a backup of the page (essentially just copying files)
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response JSON} - JSON describing success or failure
+ */
 router.post('/create', function (req, res) {
     debug('Triggering Create Backup Webjob');
 
@@ -36,6 +50,13 @@ router.post('/create', function (req, res) {
     });
 });
 
+/**
+ * Router endpoint triggering the 'restore backup' webjob, which will
+ * instruct Kudu to restore a made backup (essentially just copying back files)
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response JSON} - JSON describing success or failure
+ */
 router.post('/restore', function (req, res) {
     debug('Triggering Restore Backup Webjob');
 
@@ -46,6 +67,13 @@ router.post('/restore', function (req, res) {
     });
 });
 
+/**
+ * Router endpoint triggering the 'delete backup' webjob, which will instruct Kudu
+ * to delete a previously made backup
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response JSON} - JSON describing success or failure
+ */
 router.post('/delete', function (req, res) {
     debug('Triggering Delete Backup Webjob');
 
@@ -56,6 +84,13 @@ router.post('/delete', function (req, res) {
     });
 });
 
+/**
+ * Router endpoint returning the current status and log of the 'create backup'
+ * script
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response text/plain} - Plain text of the log
+ */
 router.get('/create', function (req, res) {
     debug('Getting create script info');
 
@@ -91,6 +126,13 @@ router.get('/create', function (req, res) {
     }    
 });
 
+/**
+ * Router endpoint returning the current status and log of the 'restore backup'
+ * script
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response text/plain} - Plain text of the log
+ */
 router.get('/restore', function (req, res) {
     debug('Getting restore script info');
 
@@ -126,6 +168,13 @@ router.get('/restore', function (req, res) {
     }    
 });
 
+/**
+ * Router endpoint returning the current status and log of the 'delete backup'
+ * script
+ * @param  {Express request} req
+ * @param  {Express response} res
+ * @return {Express response text/plain} - Plain text of the log
+ */
 router.get('/delete', function (req, res) {
     debug('Getting create script info');
 
