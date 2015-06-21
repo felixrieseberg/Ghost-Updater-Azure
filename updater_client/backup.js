@@ -10,14 +10,32 @@ UpdaterClient.backup = {
     bScriptLog: null,
     scriptLogTitle: null,
 
+    /**
+     * Appends the backup log with additional text
+     * @param  {string} text - Text to append
+     * @param  {boolean} loading - Are we loading
+     * @param  {boolean} error - Is this an error
+     * @return {$ append}
+     */
     appendLog: function (text, loading, error) {
         return UpdaterClient.utils.appendLog(text, loading, error, '#backupOutputArea');
     },
 
+    /**
+     * Appends an error to the output log
+     * @param  {string} text - Error text to append to the log
+     * @return {$ append}
+     */
     appendError: function (text) {
         return this.appendLog(text, false, true);
     },
 
+    /**
+     * Creates UI indiciating that we're depoying backup scripts, but also
+     * calls the GET 'deploy' endpoint, which will ultimately deploy the
+     * backup scripts to Kudu
+     * @param  {Function} callback
+     */
     deployScripts: function (callback) {
         var self = this,
             nochanges = ' No changes to your site have been made.',
@@ -45,6 +63,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Creates UI indicating that we're creating a remote backup, but also calls
+     * the router endpoint kicking off the webjob that will ultimately create the
+     * backup
+     */
     makeBackup: function () {
         var self = this;
         this.appendLog('Instructing Azure to create backup (this might take a while)', true);
@@ -57,6 +80,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Creates UI indicating that we're deleting a remote backup, but also calls
+     * the router endpoint kicking off the webjob that will ultimately delete the
+     * backup
+     */
     deleteBackup: function () {
         var self = UpdaterClient.backup;
 
@@ -71,6 +99,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Creates UI indicating that we're restoring a remote backup, but also calls
+     * the router endpoint kicking off the webjob that will ultimately restore the
+     * backup
+     */
     restoreBackup: function () {
         var self = UpdaterClient.backup;
 
@@ -85,6 +118,13 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Helper function called by all three "kicking off a script" methods above,
+     * getting the status for a specific script. This monster function gets the 
+     * log URL from Kudu, pulls the log, and repeats the pulling until the script
+     * has exited
+     * @param  {string} script - Name of the script
+     */
     getScriptStatus: function (script) {
         var self = UpdaterClient.backup;
 
@@ -174,6 +214,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Starts the upgrade process *with* backup, as oppposed to starting it
+     * without it.
+     * TODO: This name is confusing
+     */
     startBackup: function () {
         UpdaterClient.config.backup = true;
         UpdaterClient.utils.switchPanel('#backup');

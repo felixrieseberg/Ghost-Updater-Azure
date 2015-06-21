@@ -2,6 +2,11 @@ var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.validation = {
 
+    /**
+     * One giant validation method, taking an event and running
+     * some basic validation against a targeted input element.
+     * @param  {object} e - event
+     */
     validateConfig: function (e) {
         var urlRegex = /\**..(.azurewebsites.net)/,
             result = true,

@@ -11,14 +11,31 @@ UpdaterClient.updater = {
     timerYellow: null,
     timerRed: null,
 
+    /**
+     * Appends the updater log with additional text
+     * @param  {string} text - Text to append
+     * @param  {boolean} loading - Are we loading
+     * @param  {boolean} error - Is this an error
+     * @return {$ append}
+     */
     appendLog: function (text, loading, error) {
         return UpdaterClient.utils.appendLog(text, loading, error, '#updateOutputArea');
     },
 
+    /**
+     * Appends an error to the output log
+     * @param  {string} text - Error text to append to the log
+     * @return {$ append}
+     */
     appendError: function (text) {
         return this.appendLog(text, false, true);
     },
 
+    /**
+     * Hit's the 'upload' router endpoint, eventually attempting to
+     * upload the user-defined zip-file to the Azure Web App
+     * @param  {boolean} propagate - Should we continue with deploying once this is done?
+     */
     uploadGhost: function (propagate) {
         var self = UpdaterClient.updater, 
             nochanges = ' No changes to your site have been made.',
@@ -54,6 +71,11 @@ UpdaterClient.updater = {
         });
     },
 
+    /**
+     * Hit's the 'deploy updater' endpoint on the router, eventually
+     * attempting to upload the updater webjobs to the Azure Web App
+     * @param  {boolean} propagate - Should we trigger the script once this is done?
+     */
     deployScript: function (propagate) {
         var self = this;
         this.appendLog('Deploying update script to Azure Website');
@@ -72,6 +94,11 @@ UpdaterClient.updater = {
         });
     },
 
+    /**
+     * Hit's the 'trigger updater' endpoint on the router, eventually
+     * attempting to trigger the 'updater' webjob on the Azure Web App
+     * @param  {boolean} propagate - Should we get the script's status once this is done?
+     */
     triggerScript: function (propagate) {
         var self = this;
         this.appendLog('Starting Update script on Azure Website', true);
@@ -85,6 +112,11 @@ UpdaterClient.updater = {
         });
     },
 
+    /**
+     * Hit's the 'updater info' endpoint on the router, attempting to get
+     * the log of the 'updater webjob'. This will only work if the script
+     * is running.
+     */
     getScriptStatus: function () {
         var self = this;
 
@@ -97,7 +129,6 @@ UpdaterClient.updater = {
             url: '/updater/info',
             dataType: 'text'
         }).done(function (response) {
-
             if (response && !self.updateFinished) {   
                 clearTimeout(self.timerYellow);
                 clearTimeout(self.timerRed);
@@ -144,7 +175,11 @@ UpdaterClient.updater = {
         });
 
     },
-
+    
+    /**
+     * Kicks off the whole 'update Ghost' chain, involving all the methods
+     * above.
+     */
     startInstallation: function () {
         UpdaterClient.utils.switchPanel('#update');
         UpdaterClient.updater.uploadGhost(true);

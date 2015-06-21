@@ -13,7 +13,7 @@ UpdaterClient.init = function () {
         $('.ghostPackageLoader').hide();
     });
 
-    // Defining actions and handlers here is okay, but feels dirty.
+    // TODO: Defining actions and handlers here is okay, but feels dirty.
     // This allows us to define actions with the data-action attribute.
     $('body').on('click', '[data-action]', function() {
         var action = $(this).data('action'),

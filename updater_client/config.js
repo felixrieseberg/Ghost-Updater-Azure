@@ -8,6 +8,11 @@ UpdaterClient.config = {
     standalone: undefined,
     backup: false,
 
+    /**
+     * Takes the config entered by the user and hits the router configuration
+     * endpoint, essentially telling the Node part of this app what the
+     * configuration is.
+     */
     setConfig: function () {
         if (UpdaterClient.validation.validateConfig('default')) {
             $.ajax({
@@ -26,6 +31,12 @@ UpdaterClient.config = {
         }
     },
 
+    /**
+     * Ensures that we're running in NW.js - and show's the file
+     * upload option, if that's the case
+     * TODO: This seemed smart in the beginning, but pointless now.
+     * We're always running as an app.
+     */
     getConfig: function () {
         $.ajax('/nw').done(function (response) {
             console.log(response);
