@@ -33,8 +33,9 @@
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-node-webkit-builder": "^0.2.3",
-    "grunt-nodemon": "^0.3.0"
+    "grunt-nodemon": "^0.3.0",
+    "grunt-nw-builder": "^2.0.0",
+    "jshint": "^2.9.1"
   },
   "window": {
     "title": "Ghost Updater for Azure Websites",
@@ -46,10 +47,8 @@
     "resizable": false,
     "position": "center"
   },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/felixrieseberg/Ghost-Updater-Azure.git"
-    }
-  ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/felixrieseberg/Ghost-Updater-Azure.git"
+  }
 }

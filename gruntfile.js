@@ -45,13 +45,14 @@ module.exports = function(grunt) {
             }
         },
 
-        nodewebkit: {
+        nwjs: {
             win: {
                 options: {
                     name: 'Ghost Updater for Azure',
                     platforms: ['win'],
                     buildDir: './builds',
-                    winIco: './public/images/icon.ico'
+                    winIco: './public/images/icon.ico',
+                    version: '0.12.2'
                 },
                 src: ['public/**/*', 'node_modules/**/*', '!node_modules/grunt**/**', 'updater/**/*', 'updater_client/**/*', 'views/**/*', '*.js', '*.html', '*.json'] // Your node-webkit app
             },
@@ -72,13 +73,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-node-webkit-builder');
+    grunt.loadNpmTasks('grunt-nw-builder');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-nodemon');
 
     grunt.registerTask('test', ['jshint']);
-    grunt.registerTask('buildwin', ['concat', 'nodewebkit:win']);
-    grunt.registerTask('buildunix', ['concat', 'nodewebkit:unix']);
+    grunt.registerTask('buildwin', ['concat', 'nwjs:win']);
+    grunt.registerTask('buildunix', ['concat', 'nwjs:unix']);
     grunt.registerTask('buildandrun', ['concat', 'nodemon']);
     grunt.registerTask('dev', ['concat', 'concurrent']);
     grunt.registerTask('default', ['jshint']);

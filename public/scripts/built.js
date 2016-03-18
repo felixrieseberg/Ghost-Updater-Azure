@@ -1,4 +1,4 @@
-/*! Ghost-Updater-Azure - v0.6.1 - 2014-10-21 */var UpdaterClient = UpdaterClient || {};
+/*! Ghost-Updater-Azure - v0.6.1 - 2016-03-18 */var UpdaterClient = UpdaterClient || {};
 
 UpdaterClient.init = function () {
     UpdaterClient.config.getConfig();
@@ -13,7 +13,7 @@ UpdaterClient.init = function () {
         $('.ghostPackageLoader').hide();
     });
 
-    // Defining actions and handlers here is okay, but feels dirty.
+    // TODO: Defining actions and handlers here is okay, but feels dirty.
     // This allows us to define actions with the data-action attribute.
     $('body').on('click', '[data-action]', function() {
         var action = $(this).data('action'),
@@ -42,14 +42,32 @@ UpdaterClient.backup = {
     bScriptLog: null,
     scriptLogTitle: null,
 
+    /**
+     * Appends the backup log with additional text
+     * @param  {string} text - Text to append
+     * @param  {boolean} loading - Are we loading
+     * @param  {boolean} error - Is this an error
+     * @return {$ append}
+     */
     appendLog: function (text, loading, error) {
         return UpdaterClient.utils.appendLog(text, loading, error, '#backupOutputArea');
     },
 
+    /**
+     * Appends an error to the output log
+     * @param  {string} text - Error text to append to the log
+     * @return {$ append}
+     */
     appendError: function (text) {
         return this.appendLog(text, false, true);
     },
 
+    /**
+     * Creates UI indiciating that we're depoying backup scripts, but also
+     * calls the GET 'deploy' endpoint, which will ultimately deploy the
+     * backup scripts to Kudu
+     * @param  {Function} callback
+     */
     deployScripts: function (callback) {
         var self = this,
             nochanges = ' No changes to your site have been made.',
@@ -65,7 +83,6 @@ UpdaterClient.backup = {
                     return self.appendError(error);
                 } else {
                     return self.appendError(response.error);
-
                 }
             }
 
@@ -78,6 +95,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Creates UI indicating that we're creating a remote backup, but also calls
+     * the router endpoint kicking off the webjob that will ultimately create the
+     * backup
+     */
     makeBackup: function () {
         var self = this;
         this.appendLog('Instructing Azure to create backup (this might take a while)', true);
@@ -90,6 +112,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Creates UI indicating that we're deleting a remote backup, but also calls
+     * the router endpoint kicking off the webjob that will ultimately delete the
+     * backup
+     */
     deleteBackup: function () {
         var self = UpdaterClient.backup;
 
@@ -104,6 +131,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Creates UI indicating that we're restoring a remote backup, but also calls
+     * the router endpoint kicking off the webjob that will ultimately restore the
+     * backup
+     */
     restoreBackup: function () {
         var self = UpdaterClient.backup;
 
@@ -118,6 +150,13 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Helper function called by all three "kicking off a script" methods above,
+     * getting the status for a specific script. This monster function gets the 
+     * log URL from Kudu, pulls the log, and repeats the pulling until the script
+     * has exited
+     * @param  {string} script - Name of the script
+     */
     getScriptStatus: function (script) {
         var self = UpdaterClient.backup;
 
@@ -207,6 +246,11 @@ UpdaterClient.backup = {
         });
     },
 
+    /**
+     * Starts the upgrade process *with* backup, as oppposed to starting it
+     * without it.
+     * TODO: This name is confusing
+     */
     startBackup: function () {
         UpdaterClient.config.backup = true;
         UpdaterClient.utils.switchPanel('#backup');
@@ -222,6 +266,11 @@ UpdaterClient.config = {
     standalone: undefined,
     backup: false,
 
+    /**
+     * Takes the config entered by the user and hits the router configuration
+     * endpoint, essentially telling the Node part of this app what the
+     * configuration is.
+     */
     setConfig: function () {
         if (UpdaterClient.validation.validateConfig('default')) {
             $.ajax({
@@ -240,6 +289,12 @@ UpdaterClient.config = {
         }
     },
 
+    /**
+     * Ensures that we're running in NW.js - and show's the file
+     * upload option, if that's the case
+     * TODO: This seemed smart in the beginning, but pointless now.
+     * We're always running as an app.
+     */
     getConfig: function () {
         $.ajax('/nw').done(function (response) {
             console.log(response);
@@ -264,14 +319,31 @@ UpdaterClient.updater = {
     timerYellow: null,
     timerRed: null,
 
+    /**
+     * Appends the updater log with additional text
+     * @param  {string} text - Text to append
+     * @param  {boolean} loading - Are we loading
+     * @param  {boolean} error - Is this an error
+     * @return {$ append}
+     */
     appendLog: function (text, loading, error) {
         return UpdaterClient.utils.appendLog(text, loading, error, '#updateOutputArea');
     },
 
+    /**
+     * Appends an error to the output log
+     * @param  {string} text - Error text to append to the log
+     * @return {$ append}
+     */
     appendError: function (text) {
         return this.appendLog(text, false, true);
     },
 
+    /**
+     * Hit's the 'upload' router endpoint, eventually attempting to
+     * upload the user-defined zip-file to the Azure Web App
+     * @param  {boolean} propagate - Should we continue with deploying once this is done?
+     */
     uploadGhost: function (propagate) {
         var self = UpdaterClient.updater, 
             nochanges = ' No changes to your site have been made.',
@@ -280,7 +352,6 @@ UpdaterClient.updater = {
         this.appendLog('Uploading Ghost package to Azure Website (this might take a while)', true);
 
         $.ajax('/updater/upload').done(function(response) {
-            console.log('Upload response: ', response);
 
             if (response.error || response.statusCode >= 400) {
                 console.log('Error: ', response);
@@ -308,6 +379,11 @@ UpdaterClient.updater = {
         });
     },
 
+    /**
+     * Hit's the 'deploy updater' endpoint on the router, eventually
+     * attempting to upload the updater webjobs to the Azure Web App
+     * @param  {boolean} propagate - Should we trigger the script once this is done?
+     */
     deployScript: function (propagate) {
         var self = this;
         this.appendLog('Deploying update script to Azure Website');
@@ -326,6 +402,11 @@ UpdaterClient.updater = {
         });
     },
 
+    /**
+     * Hit's the 'trigger updater' endpoint on the router, eventually
+     * attempting to trigger the 'updater' webjob on the Azure Web App
+     * @param  {boolean} propagate - Should we get the script's status once this is done?
+     */
     triggerScript: function (propagate) {
         var self = this;
         this.appendLog('Starting Update script on Azure Website', true);
@@ -339,6 +420,11 @@ UpdaterClient.updater = {
         });
     },
 
+    /**
+     * Hit's the 'updater info' endpoint on the router, attempting to get
+     * the log of the 'updater webjob'. This will only work if the script
+     * is running.
+     */
     getScriptStatus: function () {
         var self = this;
 
@@ -351,7 +437,6 @@ UpdaterClient.updater = {
             url: '/updater/info',
             dataType: 'text'
         }).done(function (response) {
-
             if (response && !self.updateFinished) {   
                 clearTimeout(self.timerYellow);
                 clearTimeout(self.timerRed);
@@ -398,7 +483,11 @@ UpdaterClient.updater = {
         });
 
     },
-
+    
+    /**
+     * Kicks off the whole 'update Ghost' chain, involving all the methods
+     * above.
+     */
     startInstallation: function () {
         UpdaterClient.utils.switchPanel('#update');
         UpdaterClient.updater.uploadGhost(true);
@@ -407,12 +496,24 @@ UpdaterClient.updater = {
 
 UpdaterClient.utils = {
 
+    /**
+     * Switch the different 'panels' the app. Poor man's SPA.
+     * @param  {object} input - Input object with target information
+     */
     switchPanel: function (input) {
         var panel = (input.target) ? input.target.dataset.target : input;
         $('.wrapper').hide();
         $(panel).show();
     },
 
+    /**
+     * Append text to the log element in the DOM.
+     * @param  {string} text - The text to append
+     * @param  {boolean} loading - Are we loading?
+     * @param  {boolean} error - Is this an error?
+     * @param  {element|string} target - The target object
+     * @return {$.append}
+     */
     appendLog: function (text, loading, error, target) {
         var loader = '',
         errorText = (error) ? '<span class="error">Error: </span>' : '';
@@ -425,6 +526,13 @@ UpdaterClient.utils = {
         return $(target).append('<p>' + errorText + text + loader + '</p>');
     },
 
+    /**
+     * A button that indicates how long ago we've last had contact to Kudu and the
+     * Azure Web App. This is useful because we have virtually no way of telling
+     * if something went horribly wrong - ie connection lost, server down, datacenter
+     * on fire, etc.
+     * @param  {string} color - The color the button should be (red/yellow/grey/green)
+     */
     timerButton: function (color) {
         var timerCircle = $('.circle'),
             timerTooltip = $('.circle > span'),
@@ -460,6 +568,11 @@ UpdaterClient.utils = {
 
 UpdaterClient.validation = {
 
+    /**
+     * One giant validation method, taking an event and running
+     * some basic validation against a targeted input element.
+     * @param  {object} e - event
+     */
     validateConfig: function (e) {
         var urlRegex = /\**..(.azurewebsites.net)/,
             result = true,
